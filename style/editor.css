@@ -1,0 +1,97 @@
+html,body{
+    margin: 0;
+    padding: 0;
+
+    --back: rgb(67, 67, 67);
+    --text: white;
+    --backback: rgb(46, 46, 46);
+    --alt: cornflowerblue;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body{
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--backback);
+}
+
+/* MENU */
+.menu{
+    background-color: var(--back);
+    padding: 1rem;
+    border-radius: 1rem;
+    border: 1px solid var(--alt);
+}
+/* */
+
+/* ORIENTATION */
+.horizontal{
+    display: flex;
+    flex-direction: row;
+    height: 90%;
+    >*:not(:first-child){
+        margin-left: .5rem;
+    }
+}
+.vertical{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    >*:not(:first-child){
+        margin-top: .5rem;
+    }
+}
+/* */
+
+/* DISPLAY */
+.display{
+    background: 
+    linear-gradient(90deg,
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 50%
+    ),
+    linear-gradient(0deg,
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 50%
+    );
+    background-size: 5rem 5rem;
+    border: 1px solid var(--alt);
+}
+/* */
+
+/* COLOR DISPLAY */
+.color_display{
+    display: flex;
+    align-self: center;
+    width: 3rem;
+    height: 3rem;
+    font-size: 3rem;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid var(--alt);
+}
+/* */
+
+/* LABEL */
+    label{
+        color: var(--text);
+        font-size: .8rem;
+        align-self: self-start;
+        margin-right: 3rem;
+    }
+    label+*{
+        margin-top: -.8rem !important;
+        width: 3rem;
+        align-self: flex-end;
+    }
+
+/* */
+
+h3{
+    margin: 0.1rem;
+    color: white;
+}

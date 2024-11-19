@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style/editor.css">
+    <script type="module" src="js/view/picture.js"></script>
+    <title>Icon Dev Editor</title>
+</head>
+<body>
+    <div class="horizontal">
+        <div class="vertical">
+            <canvas id=renderer class=display width="300" height="300"></canvas>
+            <canvas id=editor_renderer class=display width="300" height="300"></canvas>
+        </div>
+        <div class="vertical menu" id="editor">
+            <h3>Editor</h3>
+            <div id="color_display" class="color_display">A</div>
+        </div>
+        <div class="vertical menu">
+            <h3>Light Direction</h3>
+            <input type="range" id="light_direction" min="0" max="360" value="0">
+        </div>
+        <div class="vertical menu">
+            <h3>Save/Load</h3>
+            <textarea id="load_content"></textarea>
+            <button id="load">Load</button>
+        </div>
+    </div>
+</body>
+</html>
