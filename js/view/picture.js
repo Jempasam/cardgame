@@ -13,18 +13,17 @@ let picture = new Picture()
 
 import rendering_modes from "./picture/rendering_modes.js";
 let rendering_mode = rendering_modes.shaded
+let current_effect = it=>it
 let brush = ["color", 0];
 let light_direction = [1,0]
 
 function render() {
-  console.log("Render");
-
   // Draw
   const context = render_canvas.getContext("2d");
   context.save();
   context.scale(render_canvas.width, render_canvas.height);
   context.clearRect(0, 0, 1, 1);
-  rendering_mode(context, picture, light_direction);
+  rendering_mode(context, current_effect(picture), light_direction);
   context.restore();
 
   // Draw Editor
@@ -109,16 +108,30 @@ document.querySelector("#light_direction").oninput = (e)=>{
 
 // Rendering Mode
 get("#rendering_mode").append(html`
-    ${function*(){
-        for(const [name, func] of Object.entries(rendering_modes)){
-            const option=html.a`<option value=${name}>${name}</option>`
-            option.onclick = ()=>{rendering_mode=func; render()}
-            yield option
-        }
-    }}
+  ${function*(){
+      for(const [name, func] of Object.entries(rendering_modes)){
+          const option=html.a`<option value=${name}>${name}</option>`
+          option.onclick = ()=>{rendering_mode=func; render()}
+          yield option
+      }
+  }}
 `)
 
 get("#rendering_mode").firstElementChild.click()
+
+// Effects
+import effects from "./picture/effects.js";
+get("#effects").append(html`
+  ${function*(){
+      for(const [name, func] of Object.entries(effects)){
+          const option=html.a`<option value=${name}>${name}</option>`
+          option.onclick = ()=>{current_effect=func; render()}
+          yield option
+      }
+  }}
+`)
+
+get("#effects").firstElementChild.click()
 
 // Editor Draw
 function setValue(x, y) {

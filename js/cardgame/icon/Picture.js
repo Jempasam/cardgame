@@ -53,6 +53,16 @@ export class Picture{
     }
 
     /**
+     * Check if the pixel is inside the picture.
+     * @param {number} x 
+     * @param {number} y 
+     * @returns {boolean}
+     */
+    contains(x,y){
+        return 0<=x && x<this.width && 0<=y && y<this.height
+    }
+
+    /**
      * Create a new picture of three times the dimensions of this picture.
      * Mixing the colors of the pixels in a smart way.
      */
@@ -248,6 +258,10 @@ export class Picture{
             context.fillRect(x,y,1.05,1.05)
         }
         context.restore()
+    }
+
+    clone(){
+        return new Picture(structuredClone(this.colors), structuredClone(this.pixel_colors), structuredClone(this.pixel_depth), this.width, this.height)
     }
 
 }
