@@ -79,6 +79,8 @@ export class Picture{
             let color = this.get_color(x,y)
             let depth = this.get_depth(x,y)
 
+            if(depth == -1) continue
+
             let normal_x = 0
             let normal_y = 0
 
@@ -98,8 +100,12 @@ export class Picture{
             let light = (Math.max(0, 2+(normal_x)*direction[0]) + Math.max(0, 2+(normal_y)*direction[1]))/8
             light = light - occlusion
 
-            if(depth == -1) continue
-            context.fillStyle = `rgba(${Math.floor(color[0]*255*light)},${Math.floor(color[1]*255*light)},${Math.floor(color[2]*255*light)},${color[3]})`
+            const alpha = color[3]
+            const powalpha = Math.pow(alpha, 6)
+            const alpha_ratio = depth/9
+            const final_alpha = alpha*alpha_ratio + powalpha*(1-alpha_ratio)
+
+            context.fillStyle = `rgba(${Math.floor(color[0]*255*light)},${Math.floor(color[1]*255*light)},${Math.floor(color[2]*255*light)},${final_alpha})`
             context.fillRect(x,y,1.05,1.05)
         }
         context.restore()

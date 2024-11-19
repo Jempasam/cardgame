@@ -95,6 +95,37 @@ input[type=color]{
     width: 100%;
     border: 2px solid var(--alt);
 }
+.directionnal_input{
+    align-self: center;
+    position: relative;
+    border: 1px solid var(--alt);
+    border-radius: 1rem;
+    height: 4rem;
+    width: 4rem;
+    >*{
+        width: 35%;
+        height: 35%;
+    }
+    >:nth-child(1){
+        position: absolute;
+        left: 32.5%;
+    }
+    >:nth-child(2){
+        position: absolute;
+        top: 32.5%;
+        right: 0%;
+    }
+    >:nth-child(3){
+        position: absolute;
+        left: 32.5%;
+        bottom: 0;
+    }
+    >:nth-child(4){
+        position: absolute;
+        left: 0;
+        top: 32.5%;
+    }
+}
 /* */
 
 h3{

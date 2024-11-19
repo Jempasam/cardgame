@@ -78,11 +78,7 @@ function render() {
   editor_context.restore();
 
   // Fill save load
-  load_textarea.value = JSON.stringify({
-    colors: picture.colors,
-    pixel_colors: picture.pixel_colors,
-    pixel_depth: picture.pixel_depth,
-  });
+  load_textarea.value = JSON.stringify([picture.colors, picture.pixel_colors, picture.pixel_depth]);
 }
 
 render();
@@ -90,10 +86,8 @@ render();
 // Load textarea
 load_textarea.addEventListener("input", () => {
   try {
-    const { colors, pixel_colors, pixel_depth } = JSON.parse(
-      load_textarea.value
-    );
-    picture = new Picture(colors, pixel_colors, pixel_depth);
+    const params = JSON.parse(load_textarea.value)
+    picture = new Picture(...params);
     render();
   } catch (e) {}
 });
@@ -225,3 +219,33 @@ for(let i=0; i<4; i++){
         setColor(i,[...color,alpha])
     }
 }
+
+// Examples
+const example_select = get("#examples")
+const example_json = await fetch(import.meta.resolve("./picture/shapes.json")).then(it=>it.json())
+for(const [name, data] of Object.entries(example_json)){
+    const selection = html.a`<option value=${name}>${name}</option>`
+    selection.onclick=()=>{
+        picture = new Picture(...data)
+        for(let i=0; i<4; i++) setColor(i,picture.colors[i])
+    }
+    example_select.appendChild(selection)
+}
+example_select.firstElementChild.click()
+
+// Move
+function translate(dx,dy){
+    let moved = new Picture()
+    moved.colors= picture.colors
+    for(let [x,y] of moved.indexes()){
+        moved.set_color_index(x,y, picture.get_color_index((x-dx+16)%16,(y-dy+16)%16))
+        moved.set_depth(x,y, picture.get_depth((x-dx+16)%16,(y-dy+16)%16))
+    }
+    console.log(moved)
+    picture = moved
+    render()
+}
+document.querySelector("#move_top").onclick = ()=>translate(0,-1)
+document.querySelector("#move_bottom").onclick = ()=>translate(0,1)
+document.querySelector("#move_left").onclick = ()=>translate(-1,0)
+document.querySelector("#move_right").onclick = ()=>translate(1,0)
