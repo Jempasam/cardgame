@@ -6,7 +6,19 @@ export default {
     smooth(context, picture, light_direction){
         picture.drawSmoothShadedTo(context, light_direction)
     },
-    
+
+    depthX2(color, picture, light_direction){
+        picture.superSampled().drawDepthTo(color)
+    },
+
+    shaderX2(color, picture, light_direction){
+        picture.superSampled().drawShadedTo(color, light_direction, 3, .5)
+    },
+
+    shaderX4(color, picture, light_direction){
+        picture.superSampled().superSampled().drawShadedTo(color, light_direction, 10, .5)
+    },
+
     shaded(context, picture, light_direction){
         picture.drawShadedTo(context, light_direction)
     },
@@ -21,6 +33,6 @@ export default {
 
     simple(context, picture){
         picture.drawTo(context)
-    }
+    },
 
 }

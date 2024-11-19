@@ -133,8 +133,8 @@ editor_canvas.onmousedown = editor_canvas.onmousemove = (e) => {
   if (e.buttons == 0) return;
   e.preventDefault();
 
-  const x = Math.floor((e.offsetX / editor_canvas.width) * 16);
-  const y = Math.floor((e.offsetY / editor_canvas.height) * 16);
+  const x = Math.floor((e.offsetX / editor_canvas.width) * picture.width);
+  const y = Math.floor((e.offsetY / editor_canvas.height) * picture.height);
 
   // Pick
   if (e.buttons == 4) {
@@ -211,10 +211,10 @@ function translate(dx,dy){
     let moved = new Picture()
     moved.colors= picture.colors
     for(let [x,y] of moved.indexes()){
-        moved.set_color_index(x,y, picture.get_color_index((x-dx+16)%16,(y-dy+16)%16))
-        moved.set_depth(x,y, picture.get_depth((x-dx+16)%16,(y-dy+16)%16))
+      const coords= [(x-dx+picture.width)%picture.width, (y-dy+picture.height)%picture.height]
+      moved.set_color_index(x,y, picture.get_color_index(...coords))
+      moved.set_depth(x,y, picture.get_depth(...coords))
     }
-    console.log(moved)
     picture = moved
     render()
 }
