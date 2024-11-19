@@ -2,57 +2,17 @@ import { Picture } from "../cardgame/icon/Picture.js";
 import { html } from "../utils/doc.js";
 import { get } from "../utils/query.js";
 
-const render_canvas = /** @type {HTMLCanvasElement} */ (
-  document.querySelector("#renderer")
-);
-const editor_canvas = /** @type {HTMLCanvasElement} */ (
-  document.querySelector("#editor_renderer")
-);
-const load_textarea = /** @type {HTMLTextAreaElement} */ (
-  document.querySelector("#load_content")
-);
-const load_button = /** @type {HTMLButtonElement} */ (
-  document.querySelector("#load")
-);
+
+const render_canvas = /** @type {HTMLCanvasElement} */ ( document.querySelector("#renderer"));
+const editor_canvas = /** @type {HTMLCanvasElement} */ (document.querySelector("#editor_renderer"));
+const load_textarea = /** @type {HTMLTextAreaElement} */ (document.querySelector("#load_content"));
+const load_button = /** @type {HTMLButtonElement} */ (document.querySelector("#load"));
 const color_display = document.querySelector("#color_display");
 
-let picture = new Picture(
-  [
-    [1, 0, 0, 1],
-    [1, 1, 1, 1],
-    [0, 0, 1, 1],
-    [1, 1, 1, 1],
-  ],
-  [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 2, 1, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0,
-  ],
-  [
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0,
-    -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, -1, -1, -1, 1, 1, 1, -1, 0, 0, 0,
-    0, -1, 1, 1, 1, -1, -1, -1, -1, 1, 1, 2, 2, 2, 3, 3, 2, 2, 2, 1, 1, -1, -1,
-    -1, -1, -1, 1, 2, 3, 3, 5, 5, 3, 3, 2, 1, -1, -1, -1, -1, -1, -1, 0, 3, 4,
-    5, 6, 6, 5, 4, 3, 0, -1, -1, -1, -1, -1, -1, 0, 3, 5, 5, 6, 6, 5, 5, 3, 0,
-    -1, -1, -1, -1, -1, -1, 0, 2, 4, 4, 5, 5, 4, 4, 2, 0, -1, -1, -1, -1, -1,
-    -1, -1, 1, 2, 3, 5, 5, 3, 2, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 2, 3, 5,
-    5, 3, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1, 3, 5, 5, 3, 1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, 1, 2, 4, 4, 2, 1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, 0, 3, 3, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, 2, 2, 2, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 2, 2,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1,
-  ]
-);
+let picture = new Picture()
 
+import rendering_modes from "./picture/rendering_modes.js";
+let rendering_mode = rendering_modes.shaded
 let brush = ["color", 0];
 let light_direction = [1,0]
 
@@ -64,7 +24,7 @@ function render() {
   context.save();
   context.scale(render_canvas.width, render_canvas.height);
   context.clearRect(0, 0, 1, 1);
-  picture.drawShadedTo(context,light_direction);
+  rendering_mode(context, picture, light_direction);
   context.restore();
 
   // Draw Editor
@@ -146,6 +106,19 @@ document.querySelector("#light_direction").oninput = (e)=>{
     render()
     console.log(light_direction)
 }
+
+// Rendering Mode
+get("#rendering_mode").append(html`
+    ${function*(){
+        for(const [name, func] of Object.entries(rendering_modes)){
+            const option=html.a`<option value=${name}>${name}</option>`
+            option.onclick = ()=>{rendering_mode=func; render()}
+            yield option
+        }
+    }}
+`)
+
+get("#rendering_mode").firstElementChild.click()
 
 // Editor Draw
 function setValue(x, y) {
