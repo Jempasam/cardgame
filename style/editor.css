@@ -77,18 +77,24 @@ body{
 /* */
 
 /* LABEL */
-    label{
-        color: var(--text);
-        font-size: .8rem;
-        align-self: self-start;
-        margin-right: 3rem;
-    }
-    label+*{
-        margin-top: -.8rem !important;
-        width: 3rem;
-        align-self: flex-end;
-    }
+label{
+    color: var(--text);
+    font-size: .8rem;
+    align-self: self-start;
+    margin-right: 3rem;
+}
+label+*{
+    margin-top: -.8rem !important;
+    width: 3rem;
+    align-self: flex-end;
+}
+/* */
 
+/* INPUTS */
+input[type=color]{
+    width: 100%;
+    border: 2px solid var(--alt);
+}
 /* */
 
 h3{

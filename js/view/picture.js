@@ -1,5 +1,6 @@
 import { Picture } from "../cardgame/icon/Picture.js";
 import { html } from "../utils/doc.js";
+import { get } from "../utils/query.js";
 
 const render_canvas = /** @type {HTMLCanvasElement} */ (
   document.querySelector("#renderer")
@@ -189,3 +190,38 @@ editor_canvas.onmousedown = editor_canvas.onmousemove = (e) => {
   setValue(x, y);
 };
 editor_canvas.oncontextmenu = (e) => e.preventDefault();
+
+// Set color
+/**
+ * @param {number} index 
+ * @param {[number,number,number,number]} color 
+ */
+function setColor(index,color){
+    // Elements
+    const color_picker = get(`#colors${index}`)
+    const alpha_picker= get(`#alpha${index}`)
+    const selector = get(`#color${index}`)
+
+    picture.colors[index] = color
+
+    // Set color
+    const realcolor= color.slice(0,3).map(it=>Math.floor(it*255))
+    const realalpha = color[3]
+
+    color_picker.value = "#"+realcolor.map(it=>it.toString(16).padStart(2,"0")) .join("")
+    alpha_picker.value = Math.floor(realalpha*100)
+    selector.style.color = `rgba(${realcolor.join(",")},${color[3]})`
+
+    render()
+}
+
+for(let i=0; i<4; i++){
+    setColor(i,picture.colors[i])
+    const color_picker= get(`#colors${i}`)
+    const alpha_picker= get(`#alpha${i}`)
+    color_picker.oninput = alpha_picker.oninput = (e)=>{
+        const color = color_picker.value.slice(1).match(/.{2}/g).map(it=>parseInt(it,16)/255)
+        const alpha = parseInt(alpha_picker.value)/100
+        setColor(i,[...color,alpha])
+    }
+}

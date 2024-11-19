@@ -89,10 +89,14 @@ export class Picture{
             if(y==0) normal_y = depth-this.get_depth(x,y+1)
             else if(y==15) normal_y = this.get_depth(x,y-1)-depth
             else normal_y = (depth-this.get_depth(x,y-1))+(this.get_depth(x,y+1)-depth)/2
+
+            let occlusion = 0
+            if(x!=0 && x!=15) occlusion += (this.get_depth(x+1,y)-depth) - (depth-this.get_depth(x-1,y))
+            if(y!=0 && y!=15) occlusion += (this.get_depth(x,y+1)-depth) - (depth-this.get_depth(x,y-1))
+            occlusion = Math.max(0,occlusion)/20
             
-            const light = (Math.max(0, 2+(normal_x)*direction[0]) + Math.max(0, 2+(normal_y)*direction[1]))/8
-            context.fillStyle = `rgba(${light},${light},${light},1)`
-            //context.fillStyle = `rgba(${Math.floor((normal_x+5)*20)},${Math.floor((normal_y+5)*20)},0,1)`
+            let light = (Math.max(0, 2+(normal_x)*direction[0]) + Math.max(0, 2+(normal_y)*direction[1]))/8
+            light = light - occlusion
 
             if(depth == -1) continue
             context.fillStyle = `rgba(${Math.floor(color[0]*255*light)},${Math.floor(color[1]*255*light)},${Math.floor(color[2]*255*light)},${color[3]})`
