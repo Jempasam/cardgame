@@ -22,15 +22,14 @@ export class Status{
      * @returns {HTMLElement}
      */
     createElement(){
-        let icon = /** @type {HTMLCanvasElement} */(html.a`<canvas class="-icon" width=60 height=60></canvas>`)
-        let code = this.type.icon
-        const ctx = icon.getContext("2d")
-        ctx.scale(icon.width / 2.2, icon.height / 2.2);
-        ctx.translate(1.05, 1.05);
-        drawIcon(ctx, code, 30)
+        let canvas = /** @type {HTMLCanvasElement} */(html.a`<canvas class="-icon" width=16 height=16></canvas>`)
+        let picture = this.type.picture
+        const ctx = canvas.getContext("2d")
+        ctx.scale(canvas.width, canvas.height);
+        picture.drawSmoothShadedTo(ctx, [0.4,0.4], {haveoutline:true})
         return html.a`
-            <div class="effect">
-                ${icon}
+            <div class="status">
+                ${canvas}
                 <div class="-lifetime">${this.lifetime}</div>
                 <div class="-level">${getRomanNumber(this.level)}</div>
                 <p class="-description">${this.type.name}: ${this.type.description}</p>

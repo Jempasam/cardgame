@@ -1,4 +1,4 @@
-import { Status } from "../effect/Status.js"
+import { Status } from "../status/Status.js"
 import { PieceEffect } from "./PieceEffect.js"
 
 export class PieceType{

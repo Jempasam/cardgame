@@ -58,11 +58,7 @@ function selectBrush(type, number) {
   if (type == "color") {
     const color = picture.colors[number];
     color_display.innerHTML = "C";
-    color_display.style.backgroundColor = `rgba(${Math.floor(
-      color[0] * 255
-    )},${Math.floor(color[1] * 255)},${Math.floor(color[2] * 255)},${
-      color[3]
-    })`;
+    color_display.style.backgroundColor = `rgba(${Math.floor(color[0] * 255)},${Math.floor(color[1] * 255)},${Math.floor(color[2] * 255)},${color[3]})`;
   } else {
     if (number == -1) {
       color_display.style.backgroundColor = "transparent";
@@ -180,7 +176,9 @@ function setColor(index,color){
     // Elements
     const color_picker = get(`#colors${index}`)
     const alpha_picker= get(`#alpha${index}`)
-    const selector = get(`#color${index}`)
+    const selector = get(`[for=color${index}]`)
+    console.log(selector)
+
 
     picture.colors[index] = color
 

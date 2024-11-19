@@ -5,6 +5,22 @@ export default {
 
     normal(it){ return it },
 
+    zombie(picture){
+        const ret = picture.clone()
+        ret.colors[0][0] = Math.max(0.0, picture.colors[0][0]-0.3)
+        ret.colors[0][1] = Math.min(1.0, picture.colors[0][1]+0.3)
+        ret.colors[0][2] = Math.max(0.0, picture.colors[0][2]-0.3)
+
+        ret.colors[1][0] = Math.min(1.0, picture.colors[1][0]+0.3)
+        ret.colors[1][1] = Math.max(0.0, picture.colors[1][1]-0.3)
+        ret.colors[1][2] = Math.max(0.0, picture.colors[1][2]-0.3)
+
+        for(let [x,y] of ret.indexes()){
+            if((x+y)%5==0 && y%4!=0)ret.set_depth(x,y,-1)
+        }
+        return ret
+    },
+
     drug(picture){
         const ret = picture.clone()
 

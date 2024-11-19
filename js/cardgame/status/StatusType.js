@@ -1,5 +1,6 @@
 
 import { Game } from "../Game.js";
+import { Picture } from "../icon/Picture.js";
 import { Player } from "../Player.js";
 import { Status } from "./Status.js";
 
@@ -21,11 +22,12 @@ export class StatusType{
         * A type of effect
         * @param {string} name 
         * @param {string} description 
+        * @param {Picture} picture
         */
-        constructor(name, description, icon){
+        constructor(name, description, picture){
             this.name = name;
             this.description = description
-            this.icon = icon;
+            this.picture = picture;
         }
     
         /**

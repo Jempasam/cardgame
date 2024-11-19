@@ -1,3 +1,5 @@
+import { Picture } from "../icon/Picture.js"
+import { CardEffect } from "./CardEffect.js"
 
 /**
  * A type of card.
@@ -7,13 +9,13 @@ export class CardType{
     /**
      * A type of card
      * @param {string} name 
-     * @param {import("../icon/Icon").IconCode} icon 
+     * @param {Picture} picture 
      * @param {string} description
      * @param {CardEffect[]} effects 
      */
-    constructor(name, icon, description, effects){
+    constructor(name, picture, description, effects){
         this.name = name
-        this.icon = icon
+        this.picture = picture
         this.description = description
         this.effects = effects
     }

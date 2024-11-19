@@ -1,5 +1,4 @@
 import { html } from "../../utils/doc.js";
-import { drawIcon } from "../icon/Icon.js";
 import { CardEffect } from "./CardEffect.js";
 import { CardType } from "./CardType.js";
 
@@ -27,7 +26,7 @@ export class Card{
      * @param {import("../Player").PlayerContext} context
      */
     onPlay(context){
-        this.type.effects.forEach(it => it.onPlay(context))
+        this.type.effects.forEach(it => it.onPlay({...context, card:this, effect:it}))
         this.effects.forEach(effect => effect.onPlay({...context, card:this, effect}))
     }
 
@@ -36,7 +35,7 @@ export class Card{
      * @param {import("../Player").PlayerContext} context
      */
     onDraw(context){
-        this.type.effects.forEach(it => it.onDraw(context))
+        this.type.effects.forEach(it => it.onDraw({...context, card:this, effect:it}))
         this.effects.forEach(effect => effect.onDraw({...context, card:this, effect}))
     }
 
@@ -45,7 +44,7 @@ export class Card{
      * @param {import("../Player").PlayerContext} context
      */
     onDiscard(context){
-        this.type.effects.forEach(it => it.onDiscard(context))
+        this.type.effects.forEach(it => it.onDiscard({...context, card:this, effect:it}))
         this.effects.forEach(effect => effect.onDiscard({...context, card:this, effect}))
     }
 
@@ -68,29 +67,28 @@ export class Card{
         return desc
     }
 
-    /** Get the icon of the card. */
-    getIcon(){
-        let icon = this.type.icon
+    /** Get the picture of the card. */
+    getPicture(){
+        let picture = this.type.picture
         for(let effect of this.effects){
-            icon = effect.decorateIcon(icon)
+            picture = effect.decoratePicture(picture)
         }
-        return icon;
+        return picture;
     }
 
     /**
      * @returns {HTMLElement}
      */
     createElement(){
-        let icon = /** @type {HTMLCanvasElement} */(html.a`<canvas class="-icon" width=100 height=100></canvas>`)
-        let code = this.getIcon()
-        const ctx = icon.getContext("2d")
-        ctx.scale(icon.width / 2.2, icon.height / 2.2);
-        ctx.translate(1.05, 1.05);
-        drawIcon(ctx, code, 60)
+        let canvas = /** @type {HTMLCanvasElement} */(html.a`<canvas class="-icon" width=64 height=64></canvas>`)
+        let picture = this.getPicture()
+        const ctx = canvas.getContext("2d")
+        ctx.scale(canvas.width, canvas.height);
+        picture.drawSmoothShadedTo(ctx, [0.4,0.4], {haveoutline:true})
         return html.a`
             <div class=card>
                 <h3>${this.getName()}</h3>
-                ${icon}
+                ${canvas}
                 <p>${this.getDescription()}</p>
             </div>
         `

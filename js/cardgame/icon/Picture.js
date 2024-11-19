@@ -155,8 +155,10 @@ export class Picture{
      * 
      * @param {CanvasRenderingContext2D} context
      * @param {[number,number]} direction 
+     * @param {{haveoutline?:boolean}} options
      */
-    drawSmoothShadedTo(context, direction){
+    drawSmoothShadedTo(context, direction, options={}){
+        /** @type {[[number,number,number,number],number,number][]} */
         const color_map = Array.from({length:this.width*this.height}, ()=>[[0,0,0,0],0,0])
 
         // Get the colors
@@ -173,14 +175,28 @@ export class Picture{
             let [normal_x,normal_y] = PictureUtils.get_normal(this, x, y)
             let occlusion = PictureUtils.get_occlusion(this, x, y)
 
-            let light = (Math.max(0, 2+(normal_x)*direction[0]) + Math.max(0, 2+(normal_y)*direction[1]))/8  - occlusion
+            let light = (Math.max(0, 2+normal_x*direction[0]) + Math.max(0, 2+normal_y*direction[1]))/8  - occlusion
             const alpha = color[3]
             const powalpha = Math.pow(alpha, 6)
             const alpha_ratio = depth/9
             const final_alpha = alpha*alpha_ratio + powalpha*(1-alpha_ratio)
 
-            color_map[x+y*this.width] = [color.map((it,i)=>i==3?final_alpha:it*light),color_index,depth]
-            //[color[0]*light,color[1]*light,color[2]*light,final_alpha,depth]
+            color_map[x+y*this.width] = [color.map((it,i)=>i==3?final_alpha:Math.min(1,(it+0.05)*light)),color_index,depth]
+        }
+
+        // Outline
+        if(options.haveoutline){
+            for(let [x,y] of this.indexes()){
+                if(this.get_depth(x,y) != -1 && (x!=0 && y!=0 && x!=this.width-1 && y!=this.height-1)) continue
+                for(let [dx,dy] of [[0,1],[0,-1],[1,0],[-1,0]])
+                    if(this.contains(x+dx,y+dy) && this.get_depth(x+dx,y+dy) != -1)
+                {
+                    const color = color_map[x+dx+(y+dy)*this.width][0] .map((it,i)=> i==3?it:it*0.4)
+                    color_map[x+y*this.width] = [color,4,0]
+                    break
+                }
+                    
+            }
         }
 
         // Draw the pixels

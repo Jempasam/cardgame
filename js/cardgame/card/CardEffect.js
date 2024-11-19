@@ -1,4 +1,5 @@
 import { Game } from "../Game.js";
+import { Picture } from "../icon/Picture.js";
 import { Player } from "../Player.js";
 import { Card } from "./Card.js";
 
@@ -56,11 +57,11 @@ export class CardEffect{
 
     /**
      * Called on the card .
-     * @param {import("../icon/Icon").IconCode} icon_code
-     * @returns {import("../icon/Icon").IconCode}
+     * @param {Picture} picture
+     * @returns {Picture}
      */
-    decorateIcon(icon_code){
-        return icon_code;
+    decoratePicture(picture){
+        return picture;
     }
 
 }
