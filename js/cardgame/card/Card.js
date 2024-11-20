@@ -84,12 +84,14 @@ export class Card{
         let picture = this.getPicture()
         const ctx = canvas.getContext("2d")
         ctx.scale(canvas.width, canvas.height);
-        picture.drawSmoothShadedTo(ctx, [0.4,0.4], {haveoutline:true})
+        picture.drawSmoothShadedTo(ctx, [0.4,0.4], {outline:true,shadow:true})
         return html.a`
             <div class=card>
                 <h3>${this.getName()}</h3>
                 ${canvas}
-                <p>${this.getDescription()}</p>
+                <div class="-description">
+                    <p>${this.getDescription()}</p>
+                </div>
             </div>
         `
     }

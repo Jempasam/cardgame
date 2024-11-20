@@ -3,8 +3,12 @@ import { Picture } from "../../cardgame/icon/Picture.js";
 /** @type {{ [key:string]: function(CanvasRenderingContext2D, Picture, [number,number]):void }} */
 export default {
 
+    smooth_outlined_shadowed(context, picture, light_direction){
+        picture.drawSmoothShadedTo(context, light_direction, {outline:true,shadow:true})
+    },
+
     smooth_outlined(context, picture, light_direction){
-        picture.drawSmoothShadedTo(context, light_direction, {haveoutline:true})
+        picture.drawSmoothShadedTo(context, light_direction, {outline:true})
     },
 
     smooth(context, picture, light_direction){

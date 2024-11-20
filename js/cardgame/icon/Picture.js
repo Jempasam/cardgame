@@ -155,7 +155,7 @@ export class Picture{
      * 
      * @param {CanvasRenderingContext2D} context
      * @param {[number,number]} direction 
-     * @param {{haveoutline?:boolean}} options
+     * @param {{outline?:boolean, shadow?:boolean}} options
      */
     drawSmoothShadedTo(context, direction, options={}){
         /** @type {[[number,number,number,number],number,number][]} */
@@ -185,7 +185,7 @@ export class Picture{
         }
 
         // Outline
-        if(options.haveoutline){
+        if(options.outline){
             for(let [x,y] of this.indexes()){
                 if(this.get_depth(x,y) != -1 && (x!=0 && y!=0 && x!=this.width-1 && y!=this.height-1)) continue
                 for(let [dx,dy] of [[0,1],[0,-1],[1,0],[-1,0]])
@@ -196,6 +196,23 @@ export class Picture{
                     break
                 }
                     
+            }
+        }
+        
+        // Shadow
+        if(options.shadow){
+            let dx= direction[0]*4
+            let dy= direction[1]*4
+            if(dx>1) dx=-1; else if(dx<-1) dx=1; else dx=0
+            if(dy>1) dy=-1; else if(dy<-1) dy=1; else dy=0
+            for(let [x,y] of this.indexes()){
+                if(color_map[x+y*this.width][2] != -1) continue
+                if(this.contains(x+dx,y+dy) && color_map[x+dx+(y+dy)*this.width][2]!=-1){
+                    let alpha = color_map[x+dx+(y+dy)*this.width][0][3]/3
+                    if(x==1 || y==1 || x==this.width-2 || y==this.height-2)alpha/=2
+                    if(x==0 || y==0 || x==this.width-1 || y==this.height-1)alpha/=6
+                    color_map[x+y*this.width] = [[0,0,0,alpha],4,0]
+                }
             }
         }
 

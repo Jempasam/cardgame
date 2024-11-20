@@ -134,10 +134,13 @@ hr{
     padding: 0.4rem;
     width: 10rem;
     height: 15rem;
+    position: relative;
 
     transition: scale 0.3s;
     &:hover{
-        scale: 1.03;
+        scale: 1.5;
+        z-index: 1;
+
     }
 
     >h3{
@@ -155,23 +158,60 @@ hr{
         image-rendering: pixelated;
     }
 
-    >p{
+    >.-description{
         background-color: var(--light);
         width: 100%;
-        height: 6.5rem;
+        height: 7.1rem;
         box-sizing: border-box;
         border-bottom-left-radius: 0.5rem;
         border-bottom-right-radius: 0.5rem;
         text-align: justify;
 
+        margin-top: 0.5rem;
         padding: 0.3rem;
-        font-size: 0.8rem;
+        font-size: 0.7rem;
+        line-height: 0.65rem;
+
+        p{
+            margin: 0;
+            margin-bottom: 0.2rem;
+            padding-bottom: 0.2rem;
+            padding: auto;
+            &:not(:last-child){
+                border-bottom: var(--dark) dashed 0.1rem;
+            }
+        }
     }
     
 
     background-color: var(--gray);
     border: var(--light) solid 0.5rem;
     box-shadow: 0.2rem 0.2rem 0.2rem var(--shadow);
+}
+/* */
+
+/* JAUGE */
+.jauge{
+    display: flex;
+    height: 1.5rem;
+    width: 10rem;
+    background-color: var(--black);
+    border: var(--dark) solid 0.3rem;
+    background-size: 30rem;
+    box-shadow: 0 0 0.2rem 0.1rem var(--black);
+    >.-filler{
+        color: var(--light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bolder;
+        background-color: var(--jauge-color);
+        background-image: url("../img/energy.png");
+        background-size: 10rem 10rem;
+        background-blend-mode: multiply;
+        box-shadow: inset 0.1rem 0 0.4rem -0.1rem var(--black), inset -.2rem 0 0 -.1rem var(--light);
+        height: 100%;
+    }
 }
 /* */
 

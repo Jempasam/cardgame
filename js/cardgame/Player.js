@@ -3,6 +3,7 @@ import { Status } from "./status/Status.js";
 import { Game } from "./Game.js";
 import { Picture } from "./icon/Picture.js";
 import { Field } from "./piece/Field.js";
+import { StatusList } from "./status/StatusList.js";
 
 /**
  * @typedef {Object} PlayerContext
@@ -27,9 +28,8 @@ export class Player{
 
     /**
      * The Status applied to the player
-     * @type {Status[]}
      */
-    effects = []
+    status = new StatusList()
 
     /**
      * The field of the player

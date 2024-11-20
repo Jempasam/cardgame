@@ -26,7 +26,7 @@ export class Status{
         let picture = this.type.picture
         const ctx = canvas.getContext("2d")
         ctx.scale(canvas.width, canvas.height);
-        picture.drawSmoothShadedTo(ctx, [0.4,0.4], {haveoutline:true})
+        picture.drawSmoothShadedTo(ctx, [0.4,0.4], {outline:true,shadow:true})
         return html.a`
             <div class="status">
                 ${canvas}
