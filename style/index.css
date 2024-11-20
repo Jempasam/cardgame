@@ -136,7 +136,9 @@ hr{
     height: 15rem;
     position: relative;
 
-    transition: scale 0.3s;
+    /*transition: scale 0.3s;*/
+    z-index: 0;
+    transition: scale 0.3s, z-index 0.3s;
     &:hover{
         scale: 1.5;
         z-index: 1;
@@ -169,18 +171,8 @@ hr{
 
         margin-top: 0.5rem;
         padding: 0.3rem;
-        font-size: 0.7rem;
+        font-size: 0.6rem;
         line-height: 0.65rem;
-
-        p{
-            margin: 0;
-            margin-bottom: 0.2rem;
-            padding-bottom: 0.2rem;
-            padding: auto;
-            &:not(:last-child){
-                border-bottom: var(--dark) dashed 0.1rem;
-            }
-        }
     }
     
 
@@ -211,6 +203,25 @@ hr{
         background-blend-mode: multiply;
         box-shadow: inset 0.1rem 0 0.4rem -0.1rem var(--black), inset -.2rem 0 0 -.1rem var(--light);
         height: 100%;
+    }
+}
+/* */
+
+/* TEXT */
+p.text{
+    margin: 0;
+    margin-bottom: 0.2rem;
+    padding-bottom: 0.2rem;
+    padding: auto;
+    &:not(:last-child){
+        border-bottom: var(--dark) dashed 0.1rem;
+    }
+    >strong{
+        font-size: 1.1em;
+    }
+    >.-number{
+        font-style: italic;
+        font-weight: bolder;
     }
 }
 /* */

@@ -10,7 +10,7 @@ export class CardType{
      * A type of card
      * @param {string} name 
      * @param {Picture} picture 
-     * @param {string} description
+     * @param {import("../text/Text.js").Text} description
      * @param {CardEffect[]} effects 
      */
     constructor(name, picture, description, effects){

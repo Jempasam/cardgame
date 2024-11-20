@@ -1,4 +1,5 @@
 import { html } from "../../utils/doc.js";
+import { createTextElement } from "../text/Text.js";
 import { CardEffect } from "./CardEffect.js";
 import { CardType } from "./CardType.js";
 
@@ -59,12 +60,9 @@ export class Card{
 
     /** Get the description of the card. */
     getDescription(){
-        let desc = this.type.description[0].toUpperCase() + this.type.description.substring(1) + "."
-        for(let effect of this.effects){
-            const description = effect.description
-            if(description.length > 0) desc+= "\n" + effect.description[0].toUpperCase() + effect.description.substring(1) + "."
-        }
-        return desc
+        let text = [this.type.description]
+        for(let effect of this.effects) text.push(effect.getDescription())
+        return text
     }
 
     /** Get the picture of the card. */
@@ -90,7 +88,7 @@ export class Card{
                 <h3>${this.getName()}</h3>
                 ${canvas}
                 <div class="-description">
-                    <p>${this.getDescription()}</p>
+                    ${createTextElement(this.getDescription())}
                 </div>
             </div>
         `

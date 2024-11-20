@@ -1,5 +1,5 @@
 import { html } from "../../utils/doc.js";
-import { drawIcon } from "../icon/Icon.js";
+import { createTextElement } from "../text/Text.js";
 import { StatusType } from "./StatusType.js";
 
 /**
@@ -17,6 +17,8 @@ export class Status{
         this.level = level;
         this.lifetime = lifetime;
     }
+
+    clone(){ return new Status(this.type, this.level, this.lifetime) }
     
     /**
      * @returns {HTMLElement}
@@ -32,7 +34,7 @@ export class Status{
                 ${canvas}
                 <div class="-lifetime">${this.lifetime}</div>
                 <div class="-level">${getRomanNumber(this.level)}</div>
-                <p class="-description">${this.type.name}: ${this.type.description}</p>
+                <p class="-description">${createTextElement([{"strong":this.type.name},this.type.getDescription()])}</p>
             </div>
         `
     }

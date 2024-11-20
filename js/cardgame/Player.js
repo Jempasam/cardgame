@@ -4,6 +4,7 @@ import { Game } from "./Game.js";
 import { Picture } from "./icon/Picture.js";
 import { Field } from "./piece/Field.js";
 import { StatusList } from "./status/StatusList.js";
+import { OArray } from "../observable/OArray.js";
 
 /**
  * @typedef {Object} PlayerContext
@@ -16,15 +17,21 @@ export class Player{
 
     /**
      * The card in the player hand
-     * @type {Card[]}
+     * @type {OArray<Card>}
      */
-    hand = []
+    hand = new OArray()
 
     /**
      * The card in the player deck
-     * @type {Card[]}
+     * @type {OArray<Card>}
      */
-    drawpile = []
+    draw_pile = new OArray()
+
+    /**
+     * The cards in the discard pile of the player
+     * @type {OArray<Card>}
+     */
+    discard_pile = new OArray()
 
     /**
      * The Status applied to the player
@@ -41,4 +48,5 @@ export class Player{
      * @type {function(CanvasRenderingContext2D, Picture, number):void}
      */
     renderer = (context,picture,player) => picture.drawShadedTo(context, player%2==0 ? [0.6,0.6] : [-0.6,-0.6])
+    
 }

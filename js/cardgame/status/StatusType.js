@@ -21,12 +21,10 @@ export class StatusType{
         /**
         * A type of effect
         * @param {string} name 
-        * @param {string} description 
         * @param {Picture} picture
         */
-        constructor(name, description, picture){
+        constructor(name, picture){
             this.name = name;
-            this.description = description
             this.picture = picture;
         }
     
@@ -54,5 +52,13 @@ export class StatusType{
          */
         onChangeLevel(context, from, to){
             console.log('Effect level changed');
+        }
+
+        /**
+         * Get the description of the effect.
+         * @return {import("../text/Text.js").Text}
+         */
+        getDescription(){
+            return null
         }
 }

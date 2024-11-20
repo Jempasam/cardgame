@@ -18,13 +18,6 @@ import { Card } from "./Card.js";
 export class CardEffect{
 
     /**
-     * @param {string} description 
-     */
-    constructor(description){
-        this.description = description
-    }
-
-    /**
      * Called when a card with this effect is played.
      * @param {CardEffectContext} context
      */
@@ -62,6 +55,14 @@ export class CardEffect{
      */
     decoratePicture(picture){
         return picture;
+    }
+
+    /**
+     * Get the description of the effect.
+     * @returns {import("../text/Text.js").Text}
+     */
+    getDescription(){
+        return null;
     }
 
 }

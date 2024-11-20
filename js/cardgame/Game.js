@@ -1,16 +1,22 @@
+import { OArray, OArrayObservable } from "../observable/OArray.js";
+import { Observable } from "../observable/Observable.js";
+import { OValue } from "../observable/OValue.js";
 import { Player } from "./Player.js";
 
 
 export class Game{
+
+    /** @type {Observable<{previous:number,current:number}>} */
+    after_turn_change = new Observable()
     
     /**
      * The players of the game.
-     * @type {Player[]}
+     * @type {OArray<Player>}
      */
-    players = []
-
+    players = new OArray()
+    
     /**
-     * The global effects applied to both player at the same time.
+     * The current turn number
      */
-    global_effects = []
+    current_turn= new OValue(0)
 }
