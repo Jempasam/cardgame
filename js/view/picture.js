@@ -31,13 +31,12 @@ function render() {
   editor_context.save();
   editor_context.scale(editor_canvas.width, editor_canvas.height);
   editor_context.clearRect(0, 0, 1, 1);
-  if (brush[0] == "color" || brush[1] == -1)
-    picture.drawColorTo(editor_context);
-  else picture.drawDepthTo(editor_context);
+  if (brush[0] == "color" || brush[1] == -1) picture.baked().draw(editor_context)
+  else picture.baked().makeDepthmap().draw(editor_context)
   editor_context.restore();
 
   // Fill save load
-  load_textarea.value = JSON.stringify([picture.colors, picture.pixel_colors, picture.pixel_depth]);
+  load_textarea.value = JSON.stringify([picture.materials, picture.pixel_materials, picture.pixel_depth]);
 }
 
 render();
@@ -56,7 +55,7 @@ function selectBrush(type, number) {
   brush = [type, number];
   document.getElementById(`${type}${number}`).checked = true;
   if (type == "color") {
-    const color = picture.colors[number];
+    const color = picture.materials[number];
     color_display.innerHTML = "C";
     color_display.style.backgroundColor = `rgba(${Math.floor(color[0] * 255)},${Math.floor(color[1] * 255)},${Math.floor(color[2] * 255)},${color[3]})`;
   } else {
@@ -133,7 +132,7 @@ get("#effects").firstElementChild.click()
 function setValue(x, y) {
   if (brush[0] == "color") {
     if (picture.get_depth(x, y) == -1) picture.set_depth(x, y, 0);
-    picture.set_color_index(x, y, brush[1]);
+    picture.set_material_index(x, y, brush[1]);
   } else picture.set_depth(x, y, brush[1]);
   render();
 }
@@ -150,7 +149,7 @@ editor_canvas.onmousedown = editor_canvas.onmousemove = (e) => {
     if (picture.get_depth(x, y) == -1) selectBrush("depth", -1);
     else if (brush[0] == "depth" && brush[1] != -1)
       selectBrush("depth", picture.get_depth(x, y));
-    else selectBrush("color", picture.get_color_index(x, y));
+    else selectBrush("color", picture.get_material_index(x, y));
     return;
   }
 
@@ -170,37 +169,45 @@ editor_canvas.oncontextmenu = (e) => e.preventDefault();
 // Set color
 /**
  * @param {number} index 
- * @param {[number,number,number,number]} color 
+ * @param {import("../cardgame/icon/Picture.js").PictureMaterial} material 
  */
-function setColor(index,color){
+function setMaterial(index,material){
     // Elements
     const color_picker = get(`#colors${index}`)
     const alpha_picker= get(`#alpha${index}`)
+    const light_picker= get(`#light${index}`)
+    const reflection_picker= get(`#reflection${index}`)
     const selector = get(`[for=color${index}]`)
     console.log(selector)
 
 
-    picture.colors[index] = color
+    picture.materials[index] = material
 
     // Set color
-    const realcolor= color.slice(0,3).map(it=>Math.floor(it*255))
-    const realalpha = color[3]
+    const realcolor= material.color.map(it=>Math.floor(it*255))
+    const realalpha = material.alpha
 
     color_picker.value = "#"+realcolor.map(it=>it.toString(16).padStart(2,"0")) .join("")
     alpha_picker.value = Math.floor(realalpha*100)
-    selector.style.color = `rgba(${realcolor.join(",")},${color[3]})`
+    light_picker.value = Math.floor(material.light*100)
+    reflection_picker.value = Math.floor(material.reflection*100)
+    selector.style.color = `rgba(${realcolor.join(",")},${realalpha})`
 
     render()
 }
 
 for(let i=0; i<4; i++){
-    setColor(i,picture.colors[i])
+    setMaterial(i,picture.materials[i])
     const color_picker= get(`#colors${i}`)
     const alpha_picker= get(`#alpha${i}`)
-    color_picker.oninput = alpha_picker.oninput = (e)=>{
+    const light_picker= get(`#light${i}`)
+    const reflection_picker= get(`#reflection${i}`)
+    color_picker.oninput = alpha_picker.oninput = light_picker.oninput = reflection_picker.oninput = (e)=>{
         const color = color_picker.value.slice(1).match(/.{2}/g).map(it=>parseInt(it,16)/255)
         const alpha = parseInt(alpha_picker.value)/100
-        setColor(i,[...color,alpha])
+        const light = parseInt(light_picker.value)/100
+        const reflection = parseInt(reflection_picker.value)/100
+        setMaterial(i,{color,alpha,light,reflection})
     }
 }
 
@@ -211,7 +218,7 @@ for(const [name, data] of Object.entries(example_json)){
     const selection = html.a`<option value=${name}>${name}</option>`
     selection.onclick=()=>{
         picture = new Picture(...data)
-        for(let i=0; i<4; i++) setColor(i,picture.colors[i])
+        for(let i=0; i<4; i++) setMaterial(i,picture.materials[i])
     }
     example_select.appendChild(selection)
 }
@@ -220,10 +227,10 @@ example_select.firstElementChild.click()
 // Move
 function translate(dx,dy){
     let moved = new Picture()
-    moved.colors= picture.colors
+    moved.materials= picture.materials
     for(let [x,y] of moved.indexes()){
       const coords= [(x-dx+picture.width)%picture.width, (y-dy+picture.height)%picture.height]
-      moved.set_color_index(x,y, picture.get_color_index(...coords))
+      moved.set_material_index(x,y, picture.get_material_index(...coords))
       moved.set_depth(x,y, picture.get_depth(...coords))
     }
     picture = moved

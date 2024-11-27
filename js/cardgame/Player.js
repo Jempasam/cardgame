@@ -3,8 +3,11 @@ import { Status } from "./status/Status.js";
 import { Game } from "./Game.js";
 import { Picture } from "./icon/Picture.js";
 import { Field } from "./piece/Field.js";
-import { StatusList } from "./status/StatusList.js";
-import { OArray } from "../observable/OArray.js";
+import { MOArray } from "../observable/OArray.js";
+import { StatusType } from "./status/StatusType.js";
+import { MOAutoMap } from "../observable/OAutoMap.js";
+import { JaugeType } from "./jauge/JaugeType.js";
+import { Jauge } from "./jauge/Jauge.js";
 
 /**
  * @typedef {Object} PlayerContext
@@ -17,31 +20,38 @@ export class Player{
 
     /**
      * The card in the player hand
-     * @type {OArray<Card>}
+     * @type {MOArray<Card>}
      */
-    hand = new OArray()
+    hand = new MOArray()
 
     /**
      * The card in the player deck
-     * @type {OArray<Card>}
+     * @type {MOArray<Card>}
      */
-    draw_pile = new OArray()
+    draw_pile = new MOArray()
 
     /**
      * The cards in the discard pile of the player
-     * @type {OArray<Card>}
+     * @type {MOArray<Card>}
      */
-    discard_pile = new OArray()
+    discard_pile = new MOArray()
 
     /**
      * The Status applied to the player
+     * @type {MOAutoMap<StatusType,Status>}
      */
-    status = new StatusList()
+    statuses = new MOAutoMap(it=>it.type)
 
     /**
      * The field of the player
      */
-    field = new Field(3, 3);
+    field = new Field(3, 3)
+
+    /**
+     * The jauges of the player
+     * @type {MOAutoMap<JaugeType,Jauge>}
+     */
+    jauges = new MOAutoMap(it=>it.type, it=>new Jauge(it))
 
     /**
      * The renderer used to draw the pictures

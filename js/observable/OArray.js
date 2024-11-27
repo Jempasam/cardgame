@@ -12,7 +12,7 @@ export class OArrayObservable{
     /** @type {Observable<{value:T,index:number}>} */ on_remove
 
     /**
-     * @param {OArrayObservable<T>=} parent 
+     * @param {OArrayObservable<T>=} parent
      */
     constructor(parent){
         this.on_add = new Observable(parent?.on_add)
@@ -27,65 +27,77 @@ export class OArrayObservable{
 export class OArray{
 
     /** @type {OArrayObservable<T>} */ observable
+    /** @type {T[]} @protected */_content
 
-    #content
+    /** @protected */ constructor(){}
 
-    /**
+    get length(){ return this._content.length }
+
+    /** @param {number} index */
+    get(index){
+        return this._content[index]
+    }
+
+    [Symbol.iterator](){ return this._content[Symbol.iterator]() }
+
+    values(){ return new FriendlyIterable(this._content) }
+}
+
+
+/**
+ * A observable array 
+ * @template T
+ * @extends {OArray<T>}
+ */
+export class MOArray extends OArray{
+
+     /**
      * @param {T[]=} init 
      * @param {OArrayObservable<T>=} parent
      */
-    constructor(init,parent){
+     constructor(init,parent){
+        super()
         this.observable = new OArrayObservable(parent)
-        this.#content= init ?? []
+        this._content= init ?? []
     }
 
     /**
+     * Remove the given number of elements at the given index and add the given values at the same index
      * @param {number} start
      * @param {number} deleteCount
      * @param {T[]} added 
      */
     splice(start, deleteCount, ...added){
-        const removed= this.#content.splice(start,deleteCount,...added)
+        const removed= this._content.splice(start,deleteCount,...added)
         removed.forEach((value, index) => this.observable.on_remove.notify({value, index: start+index}))
         added.forEach((value, index) => this.observable.on_add.notify({value, index: start+index}))
         return removed
     }
 
     /**
+     * Add the values at the end of the array
      * @param  {...T} added 
      */
     push(...added){ this.splice(this.length,0,...added) }
 
     /**
+     * Insert the value at the given index
      * @param {number} index 
      * @param {T} value 
      */
     insert(index,value){ this.splice(index,0,value) }
 
     /**
+     * Remove the element at the given index
      * @param {number} index 
      * @returns {T}
      */
     remove(index){ return this.splice(index,1)[0] }
 
     /**
+     * Remove the last element
      * @returns {T}
      */
     pop(){ return this.remove(this.length-1) }
 
-    get length(){
-        return this.#content.length
-    }
-
-    /**
-     * 
-     * @param {number} index 
-     */
-    get(index){
-        return this.#content[index]
-    }
-
-    [Symbol.iterator](){ return this.#content[Symbol.iterator]() }
-
-    values(){ return new FriendlyIterable(this.#content) }
 }

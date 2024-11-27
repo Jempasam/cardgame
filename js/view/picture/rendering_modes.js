@@ -1,46 +1,55 @@
 import { Picture } from "../../cardgame/icon/Picture.js";
+import { BakedPicture } from "../../cardgame/icon/BakedPicture.js";
 
 /** @type {{ [key:string]: function(CanvasRenderingContext2D, Picture, [number,number]):void }} */
 export default {
 
-    smooth_outlined_shadowed(context, picture, light_direction){
-        picture.drawSmoothShadedTo(context, light_direction, {outline:true,shadow:true})
+    smooth_complete(context, picture, light_direction){
+        new BakedPicture(picture)
+            .addOcclusion()
+            .addShadow(light_direction)
+            .addReflection(light_direction)
+            .addOuterOutline(undefined,true)
+            .addAlphaThickness()
+            .addCastedShadow(light_direction)
+            .addGloom()
+            .smoothed()
+            .draw(context)
     },
 
-    smooth_outlined(context, picture, light_direction){
-        picture.drawSmoothShadedTo(context, light_direction, {outline:true})
-    },
-
-    smooth(context, picture, light_direction){
-        picture.drawSmoothShadedTo(context, light_direction)
-    },
-
-    depthX2(color, picture, light_direction){
-        picture.superSampled().drawDepthTo(color)
-    },
-
-    shaderX2(color, picture, light_direction){
-        picture.superSampled().drawShadedTo(color, light_direction, 3, .5)
-    },
-
-    shaderX4(color, picture, light_direction){
-        picture.superSampled().superSampled().drawShadedTo(color, light_direction, 10, .5)
+    smooth_no_outline(context, picture, light_direction){
+        new BakedPicture(picture)
+            .addOcclusion()
+            .addShadow(light_direction)
+            .addReflection(light_direction)
+            .addAlphaThickness()
+            .addGloom()
+            .smoothed()
+            .draw(context)
     },
 
     shaded(context, picture, light_direction){
-        picture.drawShadedTo(context, light_direction)
+        picture.baked()
+            .addOcclusion()
+            .addShadow(light_direction)
+            .addReflection(light_direction)
+            .addOuterOutline(undefined,true)
+            .addAlphaThickness()
+            .addCastedShadow(light_direction)
+            .addGloom()
+            .draw(context)
     },
 
     color(context, picture){
-        picture.drawColorTo(context)
+        picture.baked().draw(context)
     },
 
     depth(context, picture){
-        picture.drawDepthTo(context)
+        picture.baked().makeDepthmap().draw(context)
     },
 
     simple(context, picture){
-        picture.drawTo(context)
+        picture.baked().addOuterOutline().addOcclusion().draw(context)
     },
 
 }

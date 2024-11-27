@@ -22,33 +22,6 @@ export class Card{
         this.type = type;
     }
 
-    /**
-     * Called when a card with this effect is played.
-     * @param {import("../Player").PlayerContext} context
-     */
-    onPlay(context){
-        this.type.effects.forEach(it => it.onPlay({...context, card:this, effect:it}))
-        this.effects.forEach(effect => effect.onPlay({...context, card:this, effect}))
-    }
-
-    /**
-     * Called when a card with this effect is drawn.
-     * @param {import("../Player").PlayerContext} context
-     */
-    onDraw(context){
-        this.type.effects.forEach(it => it.onDraw({...context, card:this, effect:it}))
-        this.effects.forEach(effect => effect.onDraw({...context, card:this, effect}))
-    }
-
-    /**
-     * Called when a card with this effect is discarded from the hand.
-     * @param {import("../Player").PlayerContext} context
-     */
-    onDiscard(context){
-        this.type.effects.forEach(it => it.onDiscard({...context, card:this, effect:it}))
-        this.effects.forEach(effect => effect.onDiscard({...context, card:this, effect}))
-    }
-
     /** Get the name of the card. */
     getName(){
         let name = this.type.name
@@ -73,24 +46,57 @@ export class Card{
         }
         return picture;
     }
+    
+    /**
+     * @param {keyof CardEffect} event
+     * @param {"draw"|"play"|"discard"|"start"} type 
+     * @param {import("../Player.js").PlayerContext} context 
+     */
+    #onEvent(event, type, context){
+        const game= context.game
+        const ccontext= {...context, card:this, type};
+        for(let effect of [...this.type.effects, ...this.effects]){
+            const econtext = {...ccontext, effect}
+            game.on_card_effect.notify(
+                econtext,
+                ()=>{
+                    //@ts-ignore
+                    effect[event](econtext)
+                }
+            )
+        }
+    }
 
     /**
-     * @returns {HTMLElement}
+     * Called when a card with this effect is played.
+     * @param {import("../Player.js").PlayerContext} context
      */
-    createElement(){
-        let canvas = /** @type {HTMLCanvasElement} */(html.a`<canvas class="-icon" width=64 height=64></canvas>`)
-        let picture = this.getPicture()
-        const ctx = canvas.getContext("2d")
-        ctx.scale(canvas.width, canvas.height);
-        picture.drawSmoothShadedTo(ctx, [0.4,0.4], {outline:true,shadow:true})
-        return html.a`
-            <div class=card>
-                <h3>${this.getName()}</h3>
-                ${canvas}
-                <div class="-description">
-                    ${createTextElement(this.getDescription())}
-                </div>
-            </div>
-        `
+    onPlay(context){
+        this.#onEvent("onPlay", "play", context)
     }
+
+    /**
+     * Called when a card with this effect is drawn.
+     * @param {import("../Player.js").PlayerContext} context
+     */
+    onDraw(context){
+        this.#onEvent("onDraw", "draw", context)
+    }
+
+    /**
+     * Called when a card with this effect is discarded from the hand.
+     * @param {import("../Player.js").PlayerContext} context
+     */
+    onDiscard(context){
+        this.#onEvent("onDiscard", "discard", context)
+    }
+
+    /**
+     * Called when the game starts if this card is in the deck, discardpile or hand of any player.
+     * @param {import("../Player.js").PlayerContext} context
+     */
+    onGameStart(context){
+        this.#onEvent("onGameStart", "start", context)
+    }
+    
 }

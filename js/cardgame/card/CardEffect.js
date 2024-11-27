@@ -22,7 +22,6 @@ export class CardEffect{
      * @param {CardEffectContext} context
      */
     onPlay(context){
-        console.log('Card played');
     }
 
     /**
@@ -37,6 +36,13 @@ export class CardEffect{
      * @param {CardEffectContext} context
      */
     onDiscard(context){
+    }
+
+    /**
+     * Called when the game starts if this card is in the deck, discardpile or hand of any player.
+     * @param {CardEffectContext} context
+     */
+    onGameStart(context){
     }
 
     /**

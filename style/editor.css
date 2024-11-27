@@ -95,6 +95,9 @@ input[type=color]{
     width: 100%;
     border: 2px solid var(--alt);
 }
+input[type=range]{
+    height: 0.6rem;
+}
 .directionnal_input{
     align-self: center;
     position: relative;

@@ -17,10 +17,12 @@ export class Observable{
     
     /**
      * Register an observer
-     * @param {function(T):void} observer 
+     * @param {function(T):void} observer
+     * @returns {function():void}
      */
     register(observer){
         this.#observers.add(observer)
+        return ()=> this.#observers.delete(observer)
     }
 
     /**

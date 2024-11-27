@@ -6,7 +6,30 @@ import { Observable } from "./Observable.js"
  */
 export class OValue{
 
-    #value
+    /** @type {T} */ _value
+    /** @type {Observable<{from:T, to:T}>=} */ observable
+
+    /** @protected */ constructor(){}
+
+    /**
+     * Get the value
+     * @returns {T}
+     */
+    get(){ return this._value }
+
+    /**
+     * Get the value
+     * @returns {T}
+     */
+    get value(){ return this.get() }
+
+}
+
+/**
+ * @template T
+ * @extends {OValue<T>}
+ */
+export class MOValue extends OValue{
 
     /**
      * 
@@ -14,8 +37,9 @@ export class OValue{
      * @param {Observable<{from:T, to:T}>=} parent
      */
     constructor(value, parent){
+        super()
         this.observable = new Observable(parent)
-        this.#value=value
+        this._value=value
     }
 
     /**
@@ -23,33 +47,21 @@ export class OValue{
      * @param {T} value 
      */
     set(value){
-        let old = this.#value
-        this.#value = value
+        let old = this._value
+        this._value = value
         this.observable.notify({from:old, to:value})
-    }
-
-    /**
-     * Get the value
-     * @returns {T}
-     */
-    get(){
-        return this.#value
     }
 
     /**
      * Set the value
      * @param {T} value 
      */
-    set value(value){
-        this.set(value)
-    }
+    set value(value){ this.set(value) }
 
     /**
      * Get the value
      * @returns {T}
      */
-    get value(){
-        return this.get()
-    }
+    get value(){ return this.get() }
 
 }
