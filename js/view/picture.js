@@ -318,6 +318,34 @@ get("#autodepth").onclick = (e)=>{
     }
     is_changed=new_is_changed
   }while(remaining)
+
+  // The pixel between at least three pixel of at least the same depth around and no pixel of two depth under, are upped
+  // two times
+  for(let i=0; i<2; i++){
+    const result=picture.clone()
+    for(let [x,y] of picture.indexes()){
+      if(picture.get_depth(x,y)!=-1){
+        let count=0
+        for(let [dx,dy] of [[-1,0],[1,0],[0,-1],[0,1]]){
+          const [xx,yy] = /** @type {[Number,number]} */ ([x+dx,y+dy])
+          if(picture.contains(xx,yy)){
+            if(picture.get_depth(xx,yy)>=picture.get_depth(x,y)) count++
+            else if(picture.get_depth(xx,yy)<picture.get_depth(x,y)-1 || picture.get_depth(xx,yy)==-1) count=-1000
+          }
+        }
+        if(count>=2) result.set_depth(x,y,picture.get_depth(x,y)+1)
+      }
+    }
+    picture=result
+  }
+
+
+  // Secondary colors upped
+  for(let [x,y] of picture.indexes()){
+    if(picture.get_material_index(x,y)!=0 && picture.get_depth(x,y)!=-1){
+      picture.set_depth(x,y,picture.get_depth(x,y)+1)
+    }
+  }
   render()
 }
 
