@@ -9,6 +9,26 @@
 </head>
 <body>
     <div class="horizontal">
+        <div class="vertical menu" id="explaination">
+            <h3>Auto Rendering 2d editor</h3>
+            <p>Draw a image with 4 colors and a depth map. The autorender will render a shaded image of it.</p>
+            <h3>Effects</h3>
+            <p>
+                Because of the limited amount of colors, the presence of the depth map and the small resolution,
+                visual effects can be easily applied to the picture without breaking the shading. The differents
+                regions of the picture are easily identifiable by their color id. The depth map can be used to
+                create a 3d effect.
+            </p>
+            <h3>Shading</h3>
+            <p>
+                The renderer support: directionnal shadows (bling-phong like), ambient occlusion, light emission (bloom),
+                outline, smoothing, reflectiveness (bling-phong like).
+            </p>
+            <h3>Help</h3>
+            <p>
+                Leave the mouse on a button to get a tooltip that describe its function.
+            </p>
+        </div>
         <div class="vertical">
             <canvas id=renderer class=display width="300" height="300"></canvas>
             <canvas id=editor_renderer class=display width="300" height="300"></canvas>
@@ -16,6 +36,7 @@
         <div class="vertical menu" id="editor">
             <h3>Editor</h3>
             <div id="color_display" class="color_display">A</div>
+            <p>Choose a color or a depth to create the picture. Right click on a pixel always erase, and middle click on a pixel pick the same brush as the pixel.</p>
         </div>
         <div class="vertical menu">
             <h3>Light Direction</h3>
@@ -23,34 +44,39 @@
             <h3>Rendering Mod</h3>
             <select id="rendering_mode"></select>
             <h3>Colors</h3>
+            <span title="Main color, skin, fur, etc...">?</span>
             <input type="color" id="colors0" value="#000000">
-            <input type="range" id="alpha0" min="0" max="100">
-            <input type="range" id="light0" min="0" max="100">
-            <input type="range" id="reflection0" min="0" max="100">
+            <input type="range" id="alpha0" title="Alpha" min="0" max="100">
+            <input type="range" id="light0" title="Light Emission" min="0" max="100">
+            <input type="range" id="reflection0" title="Reflectionness" min="0" max="100">
 
+            <span title="Secondary color, eye white, teeths, ...">?</span>
             <input type="color" id="colors1" value="#000000">
-            <input type="range" id="alpha1" min="0" max="100">
-            <input type="range" id="light1" min="0" max="100">
-            <input type="range" id="reflection1" min="0" max="100">
+            <input type="range" id="alpha1" title="Alpha" min="0" max="100">
+            <input type="range" id="light1" title="Light Emission" min="0" max="100">
+            <input type="range" id="reflection1" title="Reflectionness" min="0" max="100">
 
+            <span title="Tertiary color, eye color, ...">?</span>
             <input type="color" id="colors2" value="#000000">
-            <input type="range" id="alpha2" min="0" max="100">
-            <input type="range" id="light2" min="0" max="100">
+            <input type="range" id="alpha2" title="Alpha" min="0" max="100">
+            <input type="range" id="light2" title="Light Emission" min="0" max="100">
             <input type="range" id="reflection2" min="0" max="100">
 
+            <span title="Quaternary color, tongue, hairs, ...">?</span>
             <input type="color" id="colors3" value="#000000">
-            <input type="range" id="alpha3" min="0" max="100">
-            <input type="range" id="light3" min="0" max="100">
-            <input type="range" id="reflection3" min="0" max="100">
+            <input type="range" id="alpha3" title="Alpha" min="0" max="100">
+            <input type="range" id="light3" title="Light Emission" min="0" max="100">
+            <input type="range" id="reflection3" title="Reflectionness" min="0" max="100">
         </div>
         <div class="vertical menu">
             <h3>Save/Load</h3>
+            <p>Copy from or paste in thi text box to load or save a picture.</p>
             <textarea id="load_content"></textarea>
             <button id="load">Load</button>
             <h3>Examples</h3>
             <select id="examples"></select>
             <h3>Translate</h3>
-            <div class="directionnal_input">
+            <div class="directionnal_input" title="Move the whole picture in a direction">
                 <button id="move_top">🡅</button>
                 <button id="move_right">🡆</button>
                 <button id="move_bottom">🡇</button>
@@ -58,6 +84,14 @@
             </div>
             <h3>Effects</h3>
             <select id="effects"></select>
+            <h3>Generation</h3>
+            <button id="symmetrize" title="Automaticaly fill the right side of the picture with the mirrored left side">Symmetrize</button>
+            <button id="autodepth" title="Generate automaticaly the the depth map of the picture">Autodepth</button>
+            <h3 title="Export the rendered picture as a PNG image">Export</h3>
+            <button id="export_image">Export image</button>
+            <h3>Dimension</h3>
+            <input type="number" id="width" value="16" min="4" autocomplete="off">
+            <input type="number" id="height" value="16" min="4" autocomplete="off">
         </div>
     </div>
 </body>

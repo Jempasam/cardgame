@@ -49,7 +49,8 @@ export class BakedPicture{
                 let is_empty = depth==-1
                 if(depth!=-1) depth /= 10
                 else depth = 0
-                this.set(x,y,{...color, material_id: index, depth, is_empty})
+                let alpha = is_empty ? 0 : color.alpha
+                this.set(x,y,{...color, material_id: index, depth, is_empty, alpha})
             }
         }
         this.temp_data = Array.from({length:this.width*this.height}, ()=>({}))
@@ -192,10 +193,22 @@ export class BakedPicture{
                 if(dx==0 && dy==0) continue
                 if(!this.contains(x+dx,y+dy)) continue
                 const binfos = this.get(x+dx,y+dy)
-                const fstrength = strength/(Math.abs(dx)+Math.abs(dy))*binfos.alpha
-                if(!binfos.is_empty){
-                    // @ts-ignore
-                    binfos.color = binfos.color.map( (c,i) => Math.min(1,c+infos.light*fstrength*infos.color[i]) )
+                const fstrength = strength/(Math.abs(dx)+Math.abs(dy))*infos.alpha*infos.light
+                if(fstrength>0.001){
+                    if(!binfos.is_empty){
+                        // @ts-ignore
+                        binfos.color = binfos.color.map( (c,i) => Math.min(1,c+fstrength*infos.color[i]) )
+                        binfos.alpha = Math.min(1, binfos.alpha+fstrength/2)
+                    }
+                    else{
+                        binfos.is_empty=false
+                        // @ts-ignore
+                        binfos.color = infos.color.map( (c,i) => Math.min(1,c+fstrength/2) )
+                        binfos.alpha = Math.min(1, fstrength*2)
+                        binfos.light = 1
+                        binfos.material_id = 63267
+                        binfos.depth=0
+                    }
                 }
             }
         }
@@ -281,7 +294,7 @@ export class BakedPicture{
             if(!this.contains(x+dx,y+dy))continue
             const other_infos= this.get(x+dx,y+dy)
             if(!other_infos.is_empty){
-                let alpha = other_infos.alpha/2*(1-other_infos.light)
+                let alpha = other_infos.alpha/3*(1-other_infos.light)
                 if(x==1 || y==1 || x==this.width-2 || y==this.height-2)alpha/=2
                 if(x==0 || y==0 || x==this.width-1 || y==this.height-1)alpha/=2
                 this.set(x, y, {color:[0,0,0], alpha, is_empty:false, depth:0, light:0, material_id:423585, reflection:0})
@@ -305,7 +318,7 @@ export class BakedPicture{
                 for(let yy=0; yy<3; yy++)
                     ret.set(x*3+xx, y*3+yy, structuredClone(infos))
 
-            // Corner Colors"
+            // Corner Colors
             for(const dx of [-1,1]){
                 for(const dy of [-1,1]){
                     const b = this.get_overflowing(x,y+dy)
@@ -316,11 +329,11 @@ export class BakedPicture{
                         else final_mat = lerpMaterial(b,c,0.5)
                         let target= ret.get(x*3+1+dx, y*3+1+dy)
                         ret.set(x*3+1+dx, y*3+1+dy, {...target, ...final_mat})
-
                     }
                     else if (b.is_empty && c.is_empty){
                         let target= ret.get(x*3+1+dx, y*3+1+dy)
                         target.is_empty = true
+                        target.alpha = 0
                     }
                 }
             }
@@ -337,7 +350,7 @@ export class BakedPicture{
         context.scale(1/this.width,1/this.height)
         for(let [x,y] of this.indexes()){
             let {color,alpha,is_empty} = this.get(x,y)
-            if(is_empty) continue
+            if(alpha<0.001) continue
             context.fillStyle = `rgba(${Math.floor(color[0]*255)},${Math.floor(color[1]*255)},${Math.floor(color[2]*255)},${alpha})`
             context.fillRect(x,y,1.05,1.05)
         }
@@ -371,7 +384,7 @@ export const BakedPictureUtils = {
             else normal_x = (depth-picture.get(x-1,y).depth)+(picture.get(x+1,y).depth-depth)/2
 
             if(y==0) normal_y = depth-picture.get(x,y+1).depth
-            else if(y==picture.width-1) normal_y = picture.get(x,y-1).depth-depth
+            else if(y==picture.height-1) normal_y = picture.get(x,y-1).depth-depth
             else normal_y = (depth-picture.get(x,y-1).depth)+(picture.get(x,y+1).depth-depth)/2
 
             return [normal_x, normal_y]

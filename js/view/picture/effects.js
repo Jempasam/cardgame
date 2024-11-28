@@ -10,7 +10,7 @@ const effects ={
         ret.materials[0].color[0]= 1.0
         ret.materials[0].color[1]= 0.8
         ret.materials[0].color[2]= 0.0
-        ret.materials[0].light+= 0.1
+        ret.materials[0].light+= 0.2
 
         ret.materials[2].color[0]= 0.0
         ret.materials[2].color[1]= 0.0

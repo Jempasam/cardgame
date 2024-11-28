@@ -39,6 +39,23 @@ function render() {
   load_textarea.value = JSON.stringify([picture.materials, picture.pixel_materials, picture.pixel_depth]);
 }
 
+// Rollback
+let rollstack = []
+function rollback(){
+  if(rollstack.length>0){
+    picture = rollstack.pop()
+    for(let i=0; i<4; i++) setMaterial(i,picture.materials[i])
+    render()
+  }
+}
+function add_rollback(){
+  if(rollstack.length>10) rollstack.splice(0,1)
+  rollstack.push(picture.clone())
+}
+document.addEventListener("keydown", (e) => {
+  if(e.ctrlKey && e.key=="z") rollback()
+})
+
 render();
 
 // Load textarea
@@ -55,9 +72,9 @@ function selectBrush(type, number) {
   brush = [type, number];
   document.getElementById(`${type}${number}`).checked = true;
   if (type == "color") {
-    const color = picture.materials[number];
+    const {color,alpha} = picture.materials[number];
     color_display.innerHTML = "C";
-    color_display.style.backgroundColor = `rgba(${Math.floor(color[0] * 255)},${Math.floor(color[1] * 255)},${Math.floor(color[2] * 255)},${color[3]})`;
+    color_display.style.backgroundColor = `rgba(${Math.floor(color[0] * 255)},${Math.floor(color[1] * 255)},${Math.floor(color[2] * 255)},${alpha})`;
   } else {
     if (number == -1) {
       color_display.style.backgroundColor = "transparent";
@@ -116,6 +133,7 @@ get("#rendering_mode").firstElementChild.click()
 
 // Effects
 import effects from "./picture/effects.js";
+import { chest } from "../yugioh/pictures.js";
 get("#effects").append(html`
   ${function*(){
       for(const [name, func] of Object.entries(effects)){
@@ -131,18 +149,26 @@ get("#effects").firstElementChild.click()
 // Editor Draw
 function setValue(x, y) {
   if (brush[0] == "color") {
+    if(brush[1]==picture.get_material_index(x,y) && picture.get_depth(x,y)!=-1) return
+    add_rollback()
     if (picture.get_depth(x, y) == -1) picture.set_depth(x, y, 0);
     picture.set_material_index(x, y, brush[1]);
-  } else picture.set_depth(x, y, brush[1]);
+  } else{
+    if(brush[1]==picture.get_depth(x,y)) return
+    add_rollback()
+    picture.set_depth(x, y, brush[1]);
+  }
   render();
 }
 
-editor_canvas.onmousedown = editor_canvas.onmousemove = (e) => {
+editor_canvas.onmousedown = editor_canvas.onmousemove = render_canvas.onmousedown = render_canvas.onmousemove = (e) => {
+  let canvas = /** @type {HTMLCanvasElement} */ (e.target);
+
   if (e.buttons == 0) return;
   e.preventDefault();
 
-  const x = Math.floor((e.offsetX / editor_canvas.width) * picture.width);
-  const y = Math.floor((e.offsetY / editor_canvas.height) * picture.height);
+  const x = Math.floor((e.offsetX / canvas.width) * picture.width);
+  const y = Math.floor((e.offsetY / canvas.height) * picture.height);
 
   // Pick
   if (e.buttons == 4) {
@@ -164,7 +190,7 @@ editor_canvas.onmousedown = editor_canvas.onmousemove = (e) => {
   console.log(x, y, brush);
   setValue(x, y);
 };
-editor_canvas.oncontextmenu = (e) => e.preventDefault();
+editor_canvas.oncontextmenu = render_canvas.oncontextmenu = (e) => e.preventDefault();
 
 // Set color
 /**
@@ -236,7 +262,81 @@ function translate(dx,dy){
     picture = moved
     render()
 }
+
 document.querySelector("#move_top").onclick = ()=>translate(0,-1)
 document.querySelector("#move_bottom").onclick = ()=>translate(0,1)
 document.querySelector("#move_left").onclick = ()=>translate(-1,0)
 document.querySelector("#move_right").onclick = ()=>translate(1,0)
+
+// Export
+get("#export_image").onclick = ()=>{
+  html.a`<a href="${render_canvas.toDataURL("image/png")}" download></a>`.click()
+}
+
+// Symmetry
+get("#symmetrize").onclick = (e)=>{
+  add_rollback()
+  for(let x=picture.width/2+picture.width%2; x<picture.width; x++){
+      for(let y=0; y<picture.height; y++){
+          const coords = [picture.width-x-1,y]
+          picture.set_material_index(x,y, picture.get_material_index(...coords))
+          picture.set_depth(x,y, picture.get_depth(...coords))
+      }
+  }
+  render()
+}
+
+// Auto Depth
+get("#autodepth").onclick = (e)=>{
+  add_rollback()
+  let is_changed= Array.from({length:picture.width*picture.height}, ()=>true)
+
+  // Set no depth
+  for(let [x,y] of picture.indexes()){
+      if(picture.get_depth(x,y)!=-1) is_changed[x+y*picture.width]=false
+  }
+
+  // Fill
+  let remaining = false
+  do{
+    remaining=false
+    const new_is_changed=structuredClone(is_changed)
+    for(let [x,y] of picture.indexes()){
+      if(is_changed[x+y*picture.width])continue
+      let max=-2
+      for(let [dx,dy] of [[-1,0],[1,0],[0,-1],[0,1]]){
+        const [xx,yy] = /** @type {[Number,number]} */ ([x+dx,y+dy])
+        if(!picture.contains(xx,yy) || !is_changed[xx+yy*picture.width]) continue
+        max = Math.max(max, picture.get_depth(xx,yy))
+      }
+      if(max>-2){
+        new_is_changed[x+y*picture.width]=true
+        picture.set_depth(x,y,max+1)
+        console.log(max+1)
+      }
+      else remaining=true
+    }
+    is_changed=new_is_changed
+  }while(remaining)
+  render()
+}
+
+// Resize
+get("#width").onchange = get("#height").onchange = (e)=>{
+  add_rollback()
+  const width = parseInt(get("#width").value)
+  const height = parseInt(get("#height").value)
+  get("#width").value = ""+width
+  get("#height").value = ""+height
+  const new_sized_picture= new Picture(picture.materials, undefined, undefined, width, height)
+  const maxx=Math.min(width,picture.width)
+  const maxy=Math.min(height,picture.height)
+  for(let x=0; x<maxx; x++){
+    for(let y=0; y<maxy; y++){
+      new_sized_picture.set_material_index(x,y, picture.get_material_index(x,y))
+      new_sized_picture.set_depth(x,y, picture.get_depth(x,y))
+    }
+  }
+  picture=new_sized_picture
+  render()
+}

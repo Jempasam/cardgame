@@ -176,13 +176,15 @@ export function createCardView(card){
     let picture = card.getPicture()
     const ctx = canvas.getContext("2d")
     ctx.scale(canvas.width, canvas.height);
+    const angle = Math.random()*Math.PI*2
+    const light_direction = /** @type {[number,number]} */ ([0.5,0.4])
     picture.baked()
         .addOcclusion()
-        .addShadow([0.4,0.4])
-        .addReflection([0.4,0.4])
+        .addShadow(light_direction)
+        .addReflection(light_direction)
         .addOuterOutline(undefined,true)
         .addAlphaThickness()
-        .addCastedShadow([0.4,0.4])
+        .addCastedShadow(light_direction)
         .addGloom()
         .smoothed()
         .draw(ctx)
