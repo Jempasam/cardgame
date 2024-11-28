@@ -128,5 +128,22 @@ export class FriendlyIterable {
     includes(value) {
         return this.some(v=>v===value)
     }
+
+    /**
+     * Get the value after the given value, looping back to the first value if the given value is the last one.
+     * @param {T} value
+     * @returns {T|null}
+     */
+    next(value){
+        let first=null
+        let found=false
+        for(let v of this.content){
+            if(first==null)first=v
+            if(found)return v
+            if(v===value)found=true
+        }
+        if(found)return first
+        else return null
+    }
     
 }

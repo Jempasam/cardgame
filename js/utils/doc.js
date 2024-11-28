@@ -79,7 +79,7 @@ export function html(strings, ...values) {
     for(let i=0; i<functions_to_call.length; i++){
         const target= fragment.querySelector(`[_sam_fragment_to_call_${i}]`)
         target.removeAttribute(`_sam_fragment_to_call_${i}`)
-        if(typeof functions_to_call[i]==="function") functions_to_call[i]()
+        if(typeof functions_to_call[i]==="function") functions_to_call[i](target)
         else for(const [key, value] of Object.entries(functions_to_call[i])){
             if(key=="init")value(target)
             else target.addEventListener(key, value)

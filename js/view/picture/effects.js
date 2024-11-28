@@ -40,13 +40,13 @@ const effects ={
 
     zombie(picture){
         const ret = picture.clone()
-        ret.materials[0][0] = Math.max(0.0, picture.materials[0].color[0]-0.3)
-        ret.materials[0][1] = Math.min(1.0, picture.materials[0].color[1]+0.3)
-        ret.materials[0][2] = Math.max(0.0, picture.materials[0].color[2]-0.3)
+        ret.materials[0].color[1] = Math.min(1.0, picture.materials[0].color[1]+0.3)
+        ret.materials[0].color[0] = Math.max(0.0, picture.materials[0].color[0]-0.3)
+        ret.materials[0].color[2] = Math.max(0.0, picture.materials[0].color[2]-0.3)
 
-        ret.materials[1][0] = Math.min(1.0, picture.materials[1].color[0]+0.3)
-        ret.materials[1][1] = Math.max(0.0, picture.materials[1].color[1]-0.3)
-        ret.materials[1][2] = Math.max(0.0, picture.materials[1].color[2]-0.3)
+        ret.materials[1].color[0] = Math.min(1.0, picture.materials[1].color[0]+0.3)
+        ret.materials[1].color[1] = Math.max(0.0, picture.materials[1].color[1]-0.3)
+        ret.materials[1].color[2] = Math.max(0.0, picture.materials[1].color[2]-0.3)
 
         for(let [x,y] of ret.indexes()){
             if((x+y)%5==0 && y%4!=0)ret.set_depth(x,y,-1)
@@ -87,13 +87,13 @@ const effects ={
                 ret.set_material_index(x, y, picture.get_material_index(x+direction, y))
             }
         }
-        ret.materials[0][0] = Math.min(1.0, picture.materials[0].color[0]+0.2)
-        ret.materials[0][1] = Math.max(0.0, picture.materials[0].color[1]-0.2)
-        ret.materials[0][2] = Math.min(1.0, picture.materials[0].color[2]+0.3)
+        ret.materials[0].color[0] = Math.min(1.0, picture.materials[0].color[0]+0.2)
+        ret.materials[0].color[1] = Math.max(0.0, picture.materials[0].color[1]-0.2)
+        ret.materials[0].color[2] = Math.min(1.0, picture.materials[0].color[2]+0.3)
 
-        ret.materials[2][0] = Math.min(1.0, picture.materials[2].color[0]+0.3)
-        ret.materials[2][1] = Math.max(.0, picture.materials[2].color[1]-0.3)
-        ret.materials[2][2] = Math.max(.0, picture.materials[2].color[2]-0.3)
+        ret.materials[2].color[0] = Math.min(1.0, picture.materials[2].color[0]+0.3)
+        ret.materials[2].color[1] = Math.max(.0, picture.materials[2].color[1]-0.3)
+        ret.materials[2].color[2] = Math.max(.0, picture.materials[2].color[2]-0.3)
         return ret
     },
 

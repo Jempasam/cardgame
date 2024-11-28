@@ -9,6 +9,7 @@ import { Status } from "../cardgame/status/Status.js"
 import { StatusType } from "../cardgame/status/StatusType.js"
 import { createCardListView, createGameView, createJaugesView, createStatusListView } from "../cardgame/view/html_view.js"
 import { html } from "../utils/doc.js"
+import { PromiseChain } from "../utils/promises.js"
 import { get } from "../utils/query.js"
 
 let pictures = await fetch(import.meta.resolve("./picture/shapes.json"))
@@ -24,6 +25,8 @@ let bleed_type = new StatusType("Bleeding", pictures.blood)
 
 let life_type = new JaugeType(0, 100, 50, [1,0,0], "Life")
 
+const card_types = Object.values(await import("../yugioh/cards.js"))
+
 //let status= [poison_type,bleed_type].map(it=>new Status(it, 2, 3))
 
 // Create game
@@ -31,13 +34,13 @@ let game=new Game()
 game.players.push(new Player(), new Player())
 
 // Create view
-get("main") .replaceChildren(createGameView(game).element)
+get("main") .replaceChildren(createGameView(game,new PromiseChain()).element)
 
 document.addEventListener("keydown", (event) => {
     switch(event.key){
         case "d":
             console.log("Add card")
-            game.players.get(0).hand.push(new Card([dragon_type, fish_type, goblin_type][Math.floor(Math.random()*3)]))
+            game.players.get(0).hand.push(new Card(card_types[Math.floor(Math.random()*card_types.length)]))
             break
         case "p":
             console.log("Add poison")

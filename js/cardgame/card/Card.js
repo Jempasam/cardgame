@@ -34,6 +34,7 @@ export class Card{
     /** Get the description of the card. */
     getDescription(){
         let text = [this.type.description]
+        for(let effect of this.type.effects) text.push(effect.getDescription())
         for(let effect of this.effects) text.push(effect.getDescription())
         return text
     }
@@ -56,6 +57,7 @@ export class Card{
         const game= context.game
         const ccontext= {...context, card:this, type};
         for(let effect of [...this.type.effects, ...this.effects]){
+            console.log("Effect", effect)
             const econtext = {...ccontext, effect}
             game.on_card_effect.notify(
                 econtext,
