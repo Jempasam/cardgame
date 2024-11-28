@@ -3,6 +3,43 @@ import { Picture } from "../../cardgame/icon/Picture.js";
 /** @type { {[name:string]:function(Picture):Picture} } */
 const effects ={
 
+    look_right(it, dx=-1, dy=0){
+        const ret = it.clone()
+
+        // Get max
+        let max = 0
+        for(let [x,y] of ret.indexes()){
+            const depth= ret.get_depth(x,y)
+            if(depth==-1)continue
+            max = Math.max(max, depth)
+        }
+
+        // Move
+        let [xmin,xmax,xi] = dx>=0 ? [0, ret.width-dx, 1] : [ret.width+dx, 0, -1]
+        let [ymin,ymax,yi] = dy>=0 ? [0, ret.height-dy, 1] : [ret.height+dy, 0, -1]
+        for(let x=xmin; x!=xmax; x+=xi){
+            for(let y=ymin; y!=ymax; y+=yi){
+                const depth= ret.get_depth(x+dx,y+dy)
+                if(depth<=Math.floor(max/2))continue
+                ret.set_depth(x, y, depth)
+                ret.set_material_index(x, y, ret.get_material_index(x+dx, y+dy))
+                if(x+dx<ret.width-1 && y+dy<ret.width-1){
+                    ret.set_depth(x+dx, y+dy, ret.get_depth(x+dx*2, y+dy*2))
+                    ret.set_material_index(x+dx, y+dy, ret.get_material_index(x+dx*2, y+dy*2))
+                }
+                else{
+                    ret.set_depth(x+dx, y+dy, -1)
+                }
+            }
+        }
+
+        return ret
+    },
+    look_left(it){ return effects.look_right(it, 1, 0) },
+    look_up(it){ return effects.look_right(it, 0, 1) },
+    look_down(it){ return effects.look_right(it, 0, -1) },
+    
+
     normal(it){ return it },
 
     sayan(it){

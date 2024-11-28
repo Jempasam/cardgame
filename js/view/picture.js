@@ -252,7 +252,7 @@ example_select.firstElementChild.click()
 
 // Move
 function translate(dx,dy){
-    let moved = new Picture()
+    let moved = new Picture(picture.materials, undefined, undefined, picture.width, picture.height)
     moved.materials= picture.materials
     for(let [x,y] of moved.indexes()){
       const coords= [(x-dx+picture.width)%picture.width, (y-dy+picture.height)%picture.height]
