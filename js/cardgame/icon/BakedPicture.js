@@ -325,10 +325,18 @@ export class BakedPicture{
                     const c = this.get_overflowing(x+dx,y)
                     if(b.material_id==c.material_id && !b.is_empty && !c.is_empty){
                         let final_mat
-                        if(!is_empty) final_mat = lerpMaterial(b,lerpMaterial(infos,c,0.5),0.3)
-                        else final_mat = lerpMaterial(b,c,0.5)
+                        let final_depth
+                        if(!is_empty) [final_mat,final_depth] = [
+                            lerpMaterial(b,lerpMaterial(infos,c,0.5),0.6),
+                            (depth+b.depth+c.depth)/3
+                        ]
+                        else [final_mat,final_depth] = [
+                            lerpMaterial(b,c,0.5),
+                            (b.depth+c.depth)/2
+                        ]
+                        
                         let target= ret.get(x*3+1+dx, y*3+1+dy)
-                        ret.set(x*3+1+dx, y*3+1+dy, {...target, ...final_mat})
+                        ret.set(x*3+1+dx, y*3+1+dy, {...target, ...final_mat, depth:final_depth})
                     }
                     else if (b.is_empty && c.is_empty){
                         let target= ret.get(x*3+1+dx, y*3+1+dy)
