@@ -1,9 +1,192 @@
 import { Picture } from "../../cardgame/icon/Picture.js";
+import { Matrix } from "../../utils/container/Matrix.js";
 
 /** @type { {[name:string]:function(Picture,...any|undefined):Picture} } */
 const effects ={
 
     normal(it){ return it },
+
+    burning(input){
+        let output = effects.broken(input, 5, 2, 0)
+        for(let i of [0,1])//@ts-ignore
+            output.materials[i].color = output.materials[i].color.map(v=>v/8+0.2);
+            output.materials[2].color = [1,.5,0]
+            output.materials[2].light = 0.3
+
+        return output
+    },
+
+    burned(input){
+        let output = effects.broken(input)
+        for(let i of [0,3]){
+            //@ts-ignore
+            output.materials[i].color = output.materials[i].color.map(v=>v/8+0.2)
+        }
+        return output
+    },
+
+    fiery(input){
+        let output = effects.drippy(input, 0, -1, {0:2, 1:1, 2:2}, {1:true})
+        output.materials[0].color = lerp_colors(input.materials[0].color, [1, 0.3, 0], 0.6)
+        output.materials[0].light = lerp(input.materials[0].light, 0.6, 0.3)
+
+        // @ts-ignore
+        output.materials[1].color = output.materials[1].color.map(v=>v/4) 
+
+        output.materials[2].color = lerp_colors(input.materials[2].color, [1, 1, 0], 0.8)
+        output.materials[2].light = lerp(input.materials[2].light, 0.8, 0.4)
+
+        //@ts-ignore
+        output.materials[3].color = output.materials[0].color.map(v=>v*0.7)
+        output.materials[3].light = 0
+
+        for(const [x,y] of output.indexes()){
+            if(y-2+x%2+(x+1)%3*2>input.height/2 && output.get_depth(x,y)!=-1 && output.get_material_index(x,y)==0)
+                output.set_material_index(x,y,3)
+        }
+        return output 
+    },
+
+    furry(input){
+        let output = effects.excroissances(input,
+            [[1,0], [1,1], [0,1],[-1,1],[-1,0],[-1,-1],[0,-1],[1,-1]],
+            {0:true,3:true}
+        )
+        output.materials[0].color = lerp_colors(input.materials[0].color, [0.5, 0.35, 0.2], 0.9)
+        output.materials[0].reflection = lerp(input.materials[0].reflection, 0., 0.5)
+        output.materials[0].alpha = lerp(input.materials[0].alpha, 1., 0.5)
+        return output
+    },
+    
+    /**
+     * @param {Picture} input 
+     * @param {[number,number][]} directions 
+     * @param {{[key:number]:true|undefined}} materials 
+     */
+    excroissances(
+        input,
+        directions=[[1,0],[-1,0],[0,1],[0,-1]],
+        materials={0:true,1:true,2:true,3:true}
+    ){
+        let mask = new Matrix(input.width, input.height, ()=>false)
+        let output = input.clone()
+        
+        for(let [x,y] of output.indexes()){
+            if(mask.get(x,y))continue
+
+            const depth = input.get_depth(x,y)
+            for(const [dx,dy] of directions){
+
+                const px = Math.min(input.width-x-1, x)+1
+                const py = Math.min(input.height-y-1, y)+1
+                const wall = input.depths.get(x-dx,y-dy) ?? -1
+                
+                const reverse = input.depths.get(x+dx,y+dy) ?? -1
+                const rev1 = input.depths.get(x+dx,y) ?? -1
+                const rev2 = input.depths.get(x,y+dy) ?? -1
+                const top = input.depths.get(x+dy,y+dx) ?? -1
+                const down = input.depths.get(x-dy,y-dx) ?? -1
+                if(!(wall!=-1 && reverse==-1 && top==-1 && down==-1 && rev1==-1 && rev2==-1))continue
+                
+                const mat_info = materials[input.get_material_index(x-dx,y-dy)]
+                if(!mat_info)continue
+
+                output.set_depth(x,y,wall)
+                output.set_depth(x-dx,y-dy,wall+1)
+                output.set_material_index(x,y,input.get_material_index(x-dx,y-dy))
+
+                for(let xx of [x-1,x,x+1])
+                    for(let yy of [y-1,y,y+1])
+                        if(mask.contains(xx,yy))mask.set(xx,yy,true)
+            }
+        }
+        
+        return output
+    },
+
+    ghost(input, direction=1){
+        let output = effects.drippy(input, 0, 1, {1:2,2:2,3:2})
+        output.materials[0].color = lerp_colors(input.materials[0].color, [0.0, 1.0, 1.0], 0.4)
+        output.materials[1].color = lerp_colors(input.materials[1].color, [0.0, 0.7, 1.0], 0.2)
+        output.materials[2].color = lerp_colors(input.materials[2].color, [1.0, 1.0, 1.0], 0.5)
+        output.materials[3].color = lerp_colors(input.materials[3].color, [0.0, 0.7, 1.0], 0.2)
+
+        output.materials[0].alpha = lerp(input.materials[0].alpha, 0.5, 0.3)
+        output.materials[1].alpha = lerp(input.materials[0].alpha, 0.5, 0.2)
+        output.materials[2].alpha = lerp(input.materials[0].alpha, 0.5, 0.1)
+        output.materials[3].alpha = lerp(input.materials[0].alpha, 0.5, 0.1)
+        return output
+    },
+
+    auto_depth(input){
+        let output = effects.thickness_depth(input)
+
+        // The pixel between at least three pixel of at least the same depth around and no pixel of two depth under, are upped
+        // two times
+        for(let i=0; i<2; i++){
+            const result=output.clone()
+            for(let [x,y] of output.indexes()){
+            if(output.get_depth(x,y)!=-1){
+                let count=0
+                for(let [dx,dy] of [[-1,0],[1,0],[0,-1],[0,1]]){
+                const [xx,yy] = /** @type {[Number,number]} */ ([x+dx,y+dy])
+                if(output.contains(xx,yy)){
+                    if(output.get_depth(xx,yy)>=output.get_depth(x,y)) count++
+                    else if(output.get_depth(xx,yy)<output.get_depth(x,y)-1 || output.get_depth(xx,yy)==-1) count=-1000
+                }
+                }
+                if(count>=3) result.set_depth(x,y,output.get_depth(x,y)+1)
+            }
+            }
+            output=result
+        }
+
+
+        // Secondary colors upped
+        for(let [x,y] of output.indexes()){
+            if(output.get_material_index(x,y)!=0 && output.get_depth(x,y)!=-1){
+                output.set_depth(x,y,output.get_depth(x,y)+1)
+            }
+        }
+
+        return output
+    },
+
+    thickness_depth(input){
+        let is_changed= new Matrix(input.width, input.height, ()=>true)
+        let output = input.clone()
+
+        // Set no depth
+        for(let [x,y] of input.indexes()){
+            if(input.get_depth(x,y)!=-1) is_changed.set(x,y, false)
+        }
+
+        // Fill
+        let remaining = false
+        do{
+            remaining=false
+            const new_is_changed=is_changed.clone()
+            for(let [x,y] of output.indexes()){
+                if(is_changed.get(x,y))continue
+                let max=-2
+                for(let [dx,dy] of [[-1,0],[1,0],[0,-1],[0,1]]){
+                    const [xx,yy] = /** @type {[Number,number]} */ ([x+dx,y+dy])
+                    if(!output.contains(xx,yy) || !is_changed.get(xx,yy)) continue
+                    max = Math.max(max, output.get_depth(xx,yy))
+                }
+                if(max>-2){
+                    new_is_changed.set(x,y,true)
+                    output.set_depth(x,y,max+1)
+                    console.log(max+1)
+                }
+                else remaining=true
+            }
+            is_changed=new_is_changed
+        }while(remaining)
+        
+        return output
+    },
+
 
     drippy(input, dx=0, dy=1, lens={0:2, 1:1, 2:1, 3:1}, only_ins={}){
         if(dx!=0)input = effects.fit_to(input, 0, -Math.sign(dx))
@@ -107,8 +290,32 @@ const effects ={
         return ret
     },
 
-    zombie(picture){
+    /**
+     * 
+     * @param {Picture} picture 
+     * @param {number} strength 
+     * @param {1|2|3|4|undefined} material 
+     * @param {number|{offset:number}|undefined} depth 
+     * @returns 
+     */
+    broken(picture, strength=5, material=undefined, depth=-1){
         const ret = picture.clone()
+        for(let [x,y] of ret.indexes()){
+            const d = ret.get_depth(x,y)
+            if((x+y)%strength==0 && y%4!=0 && d!=-1){
+                let fdepth
+                if(depth==undefined) fdepth = undefined
+                else if(typeof depth == "object") fdepth = Math.max(1,d-depth.offset)
+                else fdepth=depth
+                if(fdepth!=undefined)ret.set_depth(x,y,fdepth)
+                if(material!=undefined)ret.set_material_index(x,y,material)
+            }
+        }
+        return ret
+    },
+
+    zombie(picture){
+        const ret = effects.broken(picture)
         ret.materials[0].color[1] = Math.min(1.0, picture.materials[0].color[1]+0.3)
         ret.materials[0].color[0] = Math.max(0.0, picture.materials[0].color[0]-0.3)
         ret.materials[0].color[2] = Math.max(0.0, picture.materials[0].color[2]-0.3)
@@ -116,10 +323,6 @@ const effects ={
         ret.materials[1].color[0] = Math.min(1.0, picture.materials[1].color[0]+0.3)
         ret.materials[1].color[1] = Math.max(0.0, picture.materials[1].color[1]-0.3)
         ret.materials[1].color[2] = Math.max(0.0, picture.materials[1].color[2]-0.3)
-
-        for(let [x,y] of ret.indexes()){
-            if((x+y)%5==0 && y%4!=0)ret.set_depth(x,y,-1)
-        }
         return ret
     },
 
@@ -176,7 +379,7 @@ const effects ={
         return ret
     },
 
-    fat(picture){
+    fato(picture){
         const ret = picture.clone()
 
         for(let [x,y] of picture.indexes()){

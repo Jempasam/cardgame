@@ -1,3 +1,4 @@
+import { Matrix } from "../../utils/container/Matrix.js"
 import { lerpMaterial, Picture } from "./Picture.js"
 
 /**
@@ -246,6 +247,25 @@ export class BakedPicture{
      * @param {boolean=} different_mat Is the outline mat different of the pixel it take its color from
      */
     addOuterOutline(darkness=0.3, different_mat=false){
+        // Get the color counts
+        const colors = new Matrix(this.width, this.height, (x,y)=>{
+            const color = [0,0,0]
+            let count = 0
+            for(let dx=-2; dx<=2; dx++)for(let dy=-2; dy<=2; dy++){
+                const xx = x+dx
+                const yy = y+dy
+                if(this.contains(xx,yy)){
+                    const around= this.get(xx,yy)
+                    if(around.is_empty) continue
+                    for(let i=0; i<3; i++) color[i] += around.color[i]
+                    count ++
+                }
+            }
+            for(let i=0; i<3; i++) color[i] /= count
+            return color
+        })
+
+        // Create the outline
         const read = this.clone()
         for(let [x,y] of this.indexes()){
             const infos = this.get(x,y)
@@ -255,13 +275,12 @@ export class BakedPicture{
 
                 let binfos = read.get(x+dx,y+dy)
                 if(binfos.is_empty) continue
-
+                let color = colors.get(x+dx,y+dy)
                 binfos = structuredClone(binfos)
-                binfos.color[0] *= darkness
-                binfos.color[1] *= darkness
-                binfos.color[2] *= darkness
+                //@ts-ignore
+                binfos.color = color.map(v=>v*darkness)
                 if(different_mat)binfos.material_id=4524
-                this.set(x,y,structuredClone(binfos))
+                this.set(x,y,binfos)
                 break     
             }
         }

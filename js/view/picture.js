@@ -296,56 +296,17 @@ get("#autodepth").onclick = (e)=>{
       if(picture.get_depth(x,y)!=-1) is_changed[x+y*picture.width]=false
   }
 
-  // Fill
-  let remaining = false
-  do{
-    remaining=false
-    const new_is_changed=structuredClone(is_changed)
-    for(let [x,y] of picture.indexes()){
-      if(is_changed[x+y*picture.width])continue
-      let max=-2
-      for(let [dx,dy] of [[-1,0],[1,0],[0,-1],[0,1]]){
-        const [xx,yy] = /** @type {[Number,number]} */ ([x+dx,y+dy])
-        if(!picture.contains(xx,yy) || !is_changed[xx+yy*picture.width]) continue
-        max = Math.max(max, picture.get_depth(xx,yy))
-      }
-      if(max>-2){
-        new_is_changed[x+y*picture.width]=true
-        picture.set_depth(x,y,max+1)
-        console.log(max+1)
-      }
-      else remaining=true
-    }
-    is_changed=new_is_changed
-  }while(remaining)
+  picture = effects.auto_depth(picture)
+  render()
+}
 
-  // The pixel between at least three pixel of at least the same depth around and no pixel of two depth under, are upped
-  // two times
-  for(let i=0; i<2; i++){
-    const result=picture.clone()
-    for(let [x,y] of picture.indexes()){
-      if(picture.get_depth(x,y)!=-1){
-        let count=0
-        for(let [dx,dy] of [[-1,0],[1,0],[0,-1],[0,1]]){
-          const [xx,yy] = /** @type {[Number,number]} */ ([x+dx,y+dy])
-          if(picture.contains(xx,yy)){
-            if(picture.get_depth(xx,yy)>=picture.get_depth(x,y)) count++
-            else if(picture.get_depth(xx,yy)<picture.get_depth(x,y)-1 || picture.get_depth(xx,yy)==-1) count=-1000
-          }
-        }
-        if(count>=2) result.set_depth(x,y,picture.get_depth(x,y)+1)
-      }
-    }
-    picture=result
-  }
-
-
-  // Secondary colors upped
-  for(let [x,y] of picture.indexes()){
-    if(picture.get_material_index(x,y)!=0 && picture.get_depth(x,y)!=-1){
-      picture.set_depth(x,y,picture.get_depth(x,y)+1)
-    }
-  }
+// Apply effects
+get("#apply_effects").onclick = (e)=>{
+  add_rollback()
+  picture = current_effect(picture)
+  let select=/** @type {HTMLSelectElement} */ (get("#effects"))
+  select.selectedIndex=0
+  select.options[0].click()
   render()
 }
 
@@ -367,4 +328,19 @@ get("#width").onchange = get("#height").onchange = (e)=>{
   }
   picture=new_sized_picture
   render()
+}
+
+// Close button
+for(let menu of document.querySelectorAll(".menu")){
+  let button = /** @type {HTMLElement} */ (menu.querySelector(":scope > ._hide_button"))
+  button.onclick = (e)=>{
+    if(menu.classList.contains("_hidden")){
+      menu.classList.remove("_hidden")
+      button.innerHTML = "X"
+    }
+    else{
+      menu.classList.add("_hidden")
+      button.innerHTML = "O"
+    }
+  }
 }

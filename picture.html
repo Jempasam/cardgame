@@ -9,7 +9,8 @@
 </head>
 <body>
     <div class="horizontal">
-        <div class="vertical menu" id="explaination">
+        <div class="vertical menu _hidden" id="explaination">
+            <div class="_hide_button">O</div>
             <h3>Auto Rendering 2d editor</h3>
             <p>Draw a image with 4 colors and a depth map. The autorender will render a shaded image of it.</p>
             <h3>Effects</h3>
@@ -34,11 +35,13 @@
             <canvas id=editor_renderer class=display width="300" height="300"></canvas>
         </div>
         <div class="vertical menu" id="editor">
+            <div class="_hide_button">X</div>
             <h3>Editor</h3>
             <div id="color_display" class="color_display">A</div>
             <p>Choose a color or a depth to create the picture. Right click on a pixel always erase, and middle click on a pixel pick the same brush as the pixel.</p>
         </div>
         <div class="vertical menu">
+            <div class="_hide_button">X</div>
             <h3>Light Direction</h3>
             <input type="range" id="light_direction" min="0" max="360" value="0">
             <h3>Rendering Mod</h3>
@@ -69,6 +72,7 @@
             <input type="range" id="reflection3" title="Reflectionness" min="0" max="100">
         </div>
         <div class="vertical menu">
+            <div class="_hide_button">X</div>
             <h3>Save/Load</h3>
             <p>Copy from or paste in thi text box to load or save a picture.</p>
             <textarea id="load_content"></textarea>
@@ -87,8 +91,12 @@
             <h3>Generation</h3>
             <button id="symmetrize" title="Automaticaly fill the right side of the picture with the mirrored left side">Symmetrize</button>
             <button id="autodepth" title="Generate automaticaly the the depth map of the picture">Autodepth</button>
+            <button id="apply_effects" title="Apply the effect to the picture and store the result in the image">Apply Effects</button>
             <h3 title="Export the rendered picture as a PNG image">Export</h3>
             <button id="export_image">Export image</button>
+        </div>
+        <div class="vertical menu _hidden">
+            <div class="_hide_button">O</div>
             <h3>Dimension</h3>
             <input type="number" id="width" value="16" min="4" autocomplete="off">
             <input type="number" id="height" value="16" min="4" autocomplete="off">

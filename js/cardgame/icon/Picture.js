@@ -1,3 +1,4 @@
+import { Matrix } from "../../utils/container/Matrix.js"
 import { BakedPicture } from "./BakedPicture.js"
 
 
@@ -14,10 +15,12 @@ export class Picture{
     materials
 
     /** @type {number[]} */
-    pixel_materials
+    #pixel_materials
+    get pixel_materials(){ return this.#pixel_materials }
 
     /** @type {number[]} */
-    pixel_depth
+    #pixel_depth
+    get pixel_depth(){ return this.#pixel_depth }
 
     /**
      * Create a picture. By default the picture is entirely empty.
@@ -39,20 +42,22 @@ export class Picture{
             {color:[1,0,0], alpha:1, light: 0, reflection: 0},
             {color:[1,0,0], alpha:1, light: 0, reflection: 0},
         ]
-        this.pixel_materials = pixel_materials ?? Array.from({length:this.width*this.height}, ()=>0)
-        this.pixel_depth = pixel_depth ?? Array.from({length:this.width*this.height}, ()=>-1)
+        this.#pixel_materials = pixel_materials ?? Array.from({length:this.width*this.height}, ()=>0)
+        this.#pixel_depth = pixel_depth ?? Array.from({length:this.width*this.height}, ()=>-1)
+        this.matids = new Matrix(this.width, this.height, this.#pixel_materials)
+        this.depths = new Matrix(this.width, this.height, this.#pixel_depth)
     }
 
-    get_material_index(x,y){ return this.pixel_materials[x+y*this.width] }
-    set_material_index(x,y,index){ this.pixel_materials[x+y*this.width] = Math.max(0, Math.min(index,3)) }
+    get_material_index(x,y){ return this.#pixel_materials[x+y*this.width] }
+    set_material_index(x,y,index){ this.#pixel_materials[x+y*this.width] = Math.max(0, Math.min(index,3)) }
     
-    get_material(x,y){ return this.materials[this.pixel_materials[x+y*this.width]] }
+    get_material(x,y){ return this.materials[this.#pixel_materials[x+y*this.width]] }
 
-    get_depth(x,y){ return this.pixel_depth[x+y*this.width] }
-    set_depth(x,y,depth){ this.pixel_depth[x+y*this.width] = Math.max(-1, Math.min(depth, 10)) }
+    get_depth(x,y){ return this.#pixel_depth[x+y*this.width] }
+    set_depth(x,y,depth){ this.#pixel_depth[x+y*this.width] = Math.max(-1, Math.min(depth, 10)) }
 
     *indexes(){ for(let x=0; x<this.width; x++) for(let y=0; y<this.height; y++) yield [x,y] }
-
+    
     /**
      * Check if the pixel is inside the picture.
      * @param {number} x 
@@ -107,7 +112,7 @@ export class Picture{
     }
 
     clone(){
-        return new Picture(structuredClone(this.materials), structuredClone(this.pixel_materials), structuredClone(this.pixel_depth), this.width, this.height)
+        return new Picture(structuredClone(this.materials), structuredClone(this.#pixel_materials), structuredClone(this.#pixel_depth), this.width, this.height)
     }
 
     baked(){

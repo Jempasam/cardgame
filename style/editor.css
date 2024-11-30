@@ -19,11 +19,38 @@ body{
 
 /* MENU */
 .menu{
+    position: relative;
     background-color: var(--back);
     padding: 1rem;
     border-radius: 1rem;
     border: 1px solid var(--alt);
+
+    &._hidden{
+        width: .5rem;
+        >*:not(._hide_button){
+            display: none;
+        }
+    }
+
+    >._hide_button{
+        position: absolute;
+        background-color: var(--alt);
+        color: var(--text);
+        right: 0.2rem;
+        top: 0.2rem;
+        border-radius: 1rem;
+        width: 1.2rem;
+        height: 1.2rem;
+        text-align: center;
+        font-weight: bolder;
+        &:hover{
+            cursor: pointer;
+            background-color: var(--text);
+            color: var(--alt);
+        }
+    }
 }
+
 /* */
 
 /* ORIENTATION */
