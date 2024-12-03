@@ -23,9 +23,13 @@ export class DamageCardEffect extends CardEffect{
         if(lifebar.current<=0){
             context.game.winner??=context.player
         }
+        return true
     }
 
     getDescription(){
         return [`deal ${this.count} damages to the opponent`]
     }
+
+    /** @type {CardEffect['getColor']} */ 
+    getColor(){ return [1,0,0] }
 }

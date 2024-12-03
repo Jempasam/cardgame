@@ -62,6 +62,7 @@ export class Game{
      * @param {Player} player 
      */
     drawCard(player){
+        if(player.draw_pile.length<=0)return
         this.on_draw_card.notify({game:this, player, card:null, cancelled:false},
             ()=>{
                 const card = player.draw_pile.pop()

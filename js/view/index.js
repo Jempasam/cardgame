@@ -1,5 +1,6 @@
 import { Card } from "../cardgame/card/Card.js"
 import { CardType } from "../cardgame/card/CardType.js"
+import { playGame } from "../cardgame/engine/play.js"
 import { Game } from "../cardgame/Game.js"
 import { drawIcon } from "../cardgame/icon/Icon.js"
 import { Picture } from "../cardgame/icon/Picture.js"
@@ -7,9 +8,9 @@ import { JaugeType } from "../cardgame/jauge/JaugeType.js"
 import { Player } from "../cardgame/Player.js"
 import { Status } from "../cardgame/status/Status.js"
 import { StatusType } from "../cardgame/status/StatusType.js"
-import { createCardListView, createGameView, createJaugesView, createStatusListView } from "../cardgame/view/html_view.js"
+import { createCardListView, createGameView, createJaugesView, createStatusListView, HTMLViewController } from "../cardgame/view/html_view.js"
 import { html } from "../utils/doc.js"
-import { PromiseChain } from "../utils/promises.js"
+import { PromiseChain, until } from "../utils/promises.js"
 import { get } from "../utils/query.js"
 
 let pictures = await fetch(import.meta.resolve("./picture/shapes.json"))
@@ -32,15 +33,28 @@ const card_types = Object.values(await import("../yugioh/cards.js"))
 // Create game
 let game=new Game()
 game.players.push(new Player(), new Player())
+for(let i=0; i<20; i++)for(const p of [0,1]){
+    game.players.get(p).draw_pile.push(new Card(card_types[Math.floor(Math.random()*card_types.length)]))
+}
 
 // Create view
-get("main") .replaceChildren(createGameView(game,new PromiseChain()).element)
+let chain = new PromiseChain()
+const gui = createGameView(game,chain)
+get("main") .replaceChildren(gui.element)
 
 document.addEventListener("keydown", (event) => {
     switch(event.key){
         case "d":
             console.log("Add card")
             game.players.get(0).hand.push(new Card(card_types[Math.floor(Math.random()*card_types.length)]))
+            break
+        case "e":
+            console.log("Add card to drawpile")
+            game.players.get(0).draw_pile.push(new Card(card_types[Math.floor(Math.random()*card_types.length)]))
+            break
+        case "r":
+            console.log("Draw a card")
+            game.drawCard(game.players.get(0))
             break
         case "p":
             console.log("Add poison")
@@ -56,3 +70,9 @@ document.addEventListener("keydown", (event) => {
             break
     }
 })
+
+let it = playGame(game, [new HTMLViewController(gui),new HTMLViewController(gui)])
+while(true){
+    await new Promise(resolve=>chain.do(async()=>resolve()))
+    if((await it.next()).done)break
+}

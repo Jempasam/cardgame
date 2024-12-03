@@ -19,9 +19,13 @@ export class HealCardEffect extends CardEffect{
     onPlay(context){
         const lifebar = context.player.jauges.get_or_create(LIFE_BAR)
         lifebar.current+= this.count
+        return true
     }
     
     getDescription(){
         return [`heal ${this.count} lifepoints to the caster`]
     }
+
+    /** @type {CardEffect['getColor']} */ 
+    getColor(){ return [0,1,0] }
 }

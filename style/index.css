@@ -1,10 +1,11 @@
 html{
     --light: #e2d1ac;
     --gray: #bd9359;
-    --dark: #724531;
+    --dark: #4D3421;
     --black: #2c2c2c;
     --shadow: rgba(0, 0, 0, 0.2);
     --dark-bg: url('../img/background.png');
+    --selection: #92ffe9;
     font-family: 'Roboto', sans-serif;
     margin: 0;
     padding: 0;
@@ -93,9 +94,25 @@ ul{
     margin: 0;
 
     background-image: var(--dark-bg);
-    border: var(--dark) solid 0.3rem;
+    border: var(--dark) solid .5rem;
+    border-image: url(../img/woodsquare.png) 47 round;
     background-size: 20rem 20rem;
     box-shadow: inset 0 0 0.5rem 0.3rem var(--black);
+
+    &._wrap{
+        flex-wrap: wrap;
+    }
+
+    &._close{
+        padding: 0;
+        >li{
+            margin: .2rem;
+        }
+    }
+
+    &._center{
+        justify-content: center;
+    }
 
     >li{
         margin: 0.5rem
@@ -118,6 +135,7 @@ ul{
     justify-content: center;
     align-items: center;
     height: 100%;
+    z-index: 1;
     >._displayed{
         display: flex;
         flex-direction: row;
@@ -180,26 +198,55 @@ hr{
 .player{
     display: flex;
     flex-direction: column;
+    padding: 0.5rem;
+
+    border: 1.4rem solid;
+    box-shadow: 0 0 1rem -0.5rem var(--team-color);
+    border-image: url("../img/woodsquare.png") 35 fill round;
+}
+/* */
+
+
+/* ALIGNMENTS */
+.horizontal{
+    display: flex;
+    flex-direction: column;
     padding: 1rem;
     background-image: url("../img/wood.png");
     background-color: var(--team-color);
     background-blend-mode: multiply;
     background-size: 10rem;
     box-shadow: inset 0 0 0.5rem 0.2rem var(--black);
-
 }
+.columns{
+    display: flex;
+    flex-direction: rows;
+    justify-content: stretch;
+    margin: 0;
+    padding: 0;
+    >div{
+        &:first-child{
+            flex-grow: 1;
+        }
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background-color: var(--dark);
+    }
+}
+/* */
 
 
 /* CARD */
 .card-height{
-    min-height: 17rem;
+    min-height: 15rem;
 }
 .card{
     contain: strict;
     border-radius: 1rem;
     padding: 0.4rem;
     width: 10rem;
-    height: 15rem;
+    height: 13rem;
     position: relative;
 
     /*transition: scale 0.3s;*/
@@ -214,14 +261,17 @@ hr{
     >h3{
         font-variant-caps: all-small-caps;
         margin: 0;
+        margin-bottom: -0.1em;
+        margin-top: -0.6rem;
+        text-shadow: 0 0.1rem 0 var(--light), 0.1rem 0 0 var(--light), 0 -0.1rem 0 var(--light), -0.1rem 0 0 var(--light);
         padding: 0;
         text-align: center;
     }
 
     >.-icon{
         display: block;
-        width: 6rem;
-        height: 6rem;
+        width: 5rem;
+        height: 5rem;
         margin: 0 auto;
         image-rendering: pixelated;
     }
@@ -229,7 +279,7 @@ hr{
     >.-description{
         background-color: var(--light);
         width: 100%;
-        height: 7.1rem;
+        height: 6.9rem;
         box-sizing: border-box;
         border-bottom-left-radius: 0.5rem;
         border-bottom-right-radius: 0.5rem;
@@ -246,6 +296,42 @@ hr{
     border: var(--light) solid 0.5rem;
     box-shadow: 0.2rem 0.2rem 0.2rem var(--shadow);
 }
+.card_back{
+    contain: layout;
+    border-radius: 1rem;
+    padding: 0.4rem;
+    width: 10rem;
+    height: 13rem;
+    position: relative;
+
+    &:not(._empty){
+        background: repeating-radial-gradient(closest-side, var(--gray), var(--gray) 1rem, var(--light) 1rem, var(--light) 2rem);
+        border: var(--light) solid 0.5rem;
+    }
+    &._empty{
+        margin: 0.5rem;
+    }
+    box-shadow: 0.2rem 0.2rem 0.2rem var(--shadow);
+
+    padding: 0;
+    position: relative;
+    &._over{
+        box-sizing: content-box;
+        position: absolute;
+        top: -0.5rem;
+        left: -0.5rem;
+        margin: 0;
+    }
+    &._deck9{ border-bottom: var(--light) 4.5rem solid; }
+    &._deck8{ border-bottom: var(--light) 4rem solid; }
+    &._deck7{ border-bottom: var(--light) 3.5rem solid; }
+    &._deck6{ border-bottom: var(--light) 3rem solid; }
+    &._deck5{ border-bottom: var(--light) 2.5rem solid; }
+    &._deck4{ border-bottom: var(--light) 2rem solid; }
+    &._deck3{ border-bottom: var(--light) 1.5rem solid; }
+    &._deck2{ border-bottom: var(--light) 1rem solid; }
+    &._deck1{ border-bottom: var(--light) .5rem solid; }
+}
 /* */
 
 /* JAUGE */
@@ -258,6 +344,7 @@ hr{
     background-size: 30rem;
     box-shadow: 0 0 0.2rem 0.1rem var(--black);
     >.-filler{
+        transition: width 0.3s;
         color: var(--light);
         display: flex;
         align-items: center;
@@ -361,12 +448,72 @@ p.text{
 /* */
 
 
-/* ANIMATION */
-@keyframes anim_go_up {
-    from { translate: 0 0 ;}
-    to { translate: 0 -100%;}
+/* SELECTABLE */
+.selectable{
+    box-shadow: inset 0 0 0.5rem 0.2rem var(--selection);
+    animation: selectable 1s infinite alternate ease-in-out;
+    cursor: pointer;
 }
-.anim_go_up{
-    animation: anim_go_up 0.5s;
+@keyframes selectable {
+    from { border-color: var(--selection); }
+    to { border-color: transparent; }
+}
+/* */
+
+
+/* ANIMATION */
+@keyframes anim_remove {
+    from { translate: 0 0 ; opacity:1; }
+    to { translate: 0 -100%; opacity: 0; }
+}
+.anim_remove{
+    animation: anim_remove 0.3s;
+}
+
+@keyframes anim_add {
+    from { translate: 0 -100%; opacity: 0; }
+    to { translate: 0 0 ; opacity:1; }
+}
+.anim_add{
+    animation: anim_add 0.3s;
+}
+
+@keyframes anim_bump {
+    0% { scale: 1; }
+    50% { scale: 1.1; }
+    100% { scale: 1; }
+}
+.anim_bump{
+    animation: anim_bump 0.3s;
+}
+/* */
+
+/* ASIDE */
+.asideable{
+    transition: scale 0.3s, margin-top 0.3s, margin-bottom 0.3s;
+}
+.aside{
+    scale: 0.3;
+    margin-top: -15%;
+    margin-bottom: -15%;
+}
+/* */
+
+/* EFFECT */
+.effect{
+    pointer-events: none;
+    background-color: var(--effect-color,blue);
+    background-image: url(../img/light.png);
+    mask-image: url(../img/light.png);
+    mask-size: 100% 100%;
+    background-size: 100% 100%;
+    margin: -3rem;
+    padding: 3rem;
+    rotate: 0;
+    animation: effect .1s infinite alternate ease-out;
+}
+@keyframes effect {
+    from { scale: 0.9; }
+    to { scale: 1; }
 }
 /* */

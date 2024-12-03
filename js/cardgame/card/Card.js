@@ -57,13 +57,12 @@ export class Card{
         const game= context.game
         const ccontext= {...context, card:this, type};
         for(let effect of [...this.type.effects, ...this.effects]){
-            console.log("Effect", effect)
             const econtext = {...ccontext, effect}
             game.on_card_effect.notify(
                 econtext,
-                ()=>{
+                (cancel)=>{
                     //@ts-ignore
-                    effect[event](econtext)
+                    if(!effect[event](econtext))cancel()
                 }
             )
         }

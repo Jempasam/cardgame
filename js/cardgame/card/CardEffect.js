@@ -20,29 +20,37 @@ export class CardEffect{
     /**
      * Called when a card with this effect is played.
      * @param {CardEffectContext} context
+     * @returns {boolean} True if the card was played, false if it was cancelled.
      */
     onPlay(context){
+        return false
     }
 
     /**
      * Called when a card with this effect is drawn.
      * @param {CardEffectContext} context
+     * @returns {boolean} True if the card was played, false if it was cancelled.
      */
     onDraw(context){
+        return false
     }
 
     /**
      * Called when a card with this effect is discarded from the hand.
      * @param {CardEffectContext} context
+     * @returns {boolean} True if the card was played, false if it was cancelled.
      */
     onDiscard(context){
+        return false
     }
 
     /**
      * Called when the game starts if this card is in the deck, discardpile or hand of any player.
      * @param {CardEffectContext} context
+     * @returns {boolean} True if the card was played, false if it was cancelled.
      */
     onGameStart(context){
+        return false
     }
 
     /**
@@ -69,6 +77,14 @@ export class CardEffect{
      */
     getDescription(){
         return null;
+    }
+
+    /**
+     * Get the color of the effect.
+     * @returns {[number,number,number]}
+     */
+    getColor(){
+        return [0,0,0]
     }
 
 }

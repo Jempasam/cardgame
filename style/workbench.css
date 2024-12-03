@@ -1,0 +1,193 @@
+/* GLOBAL */
+html{
+    --white: #ceb89f;
+    --light: #9a846b;
+    --mid: #71583b;
+    --dark: #473a2b;
+    --black: #292015;
+    --shadow: #0000005c;
+    --border: url(../img/woodborder.png);
+    --button: url(../img/plank.png);
+    --file-back: url(../img/wood.png);
+    font-family: Arial, Helvetica, sans-serif;
+}
+html,body,main{
+    margin: 0;
+    padding: 0;
+}
+html,body{
+    box-sizing: border-box;
+    height: 100%;
+}
+/* */
+
+/* PANES */
+.pane{
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+
+    border: 0.8rem solid;
+    border-image: var(--border) 128 round;
+    box-shadow: inset 0 0 .1rem 0.3rem var(--shadow);
+    background-color: var(--light);
+
+    &._horizontal{
+        flex-direction: row;
+    }
+    &._vertical{
+        flex-direction: column;
+    }
+    &._scrollable{
+        overflow-y:scroll;
+    }
+}
+/* */
+
+/* TITLES */
+h1,h2,h3,h4,h5,h6{
+    display: block;
+
+    border: 0.5rem solid;
+    border-right: none;
+    border-left: none;
+    border-image: var(--border) 128 round;
+
+
+    background-color: var(--mid);
+    margin: 0;
+    padding: .2rem;
+
+    text-align: center;
+
+    margin-left: .5rem;
+    font-variant-caps: all-small-caps;
+    color: var(--white);
+    text-shadow: -.1rem -.1rem var(--black), .1rem .1rem var(--light);
+    background-size: 100% 100%;
+}
+/* */
+
+/* PARAGRAPH */
+p{
+    margin: .5rem;
+    text-align: justify;
+}
+/* */
+
+/* DIRECTORY */
+.file, .directory{
+    &._disappearing { animation: appearing 0.2s reverse forwards; }
+    &._appearing { animation: appearing 0.2s forwards; }
+
+}
+.file, .directory>.-title{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    >.-tag{
+        text-shadow: none;
+        font-size: .8rem;
+        font-weight: bolder;
+        color: rgb(255,255,255,0.7);
+    }
+    >.-name{
+        flex-grow: 1;
+        
+    }
+    >input.-name{
+        font-size: inherit;
+        font-weight: inherit;
+        color: inherit;
+        text-shadow: inherit;
+        background: var(--shadow);
+        border-radius: 0.2rem;
+        border: none;
+        outline: none;
+        padding-left: 0.5rem;
+    }
+    >.-icon{
+        cursor: pointer;
+        &:hover{
+            scale: 1.2;
+        }
+    }
+    >*{
+        margin-left: .2rem;
+        margin-right: .2rem;
+    }
+
+    background-color: var(--dir-color);
+    padding: 0.3rem;
+
+    color: white;
+    text-shadow: -.1rem -.1rem black, .1rem -.1rem black, 0rem .1rem black;
+
+    &._selected{
+        padding-left: 1rem;
+        filter: saturate(.7);
+        border-left: 0.3rem solid var(--white);
+    }
+    &:hover:not(._selected){
+        filter: saturate(.9);
+        cursor: pointer;
+    }
+}
+.file{
+    &::before{ content: "📄 "; }
+}
+.directory{
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    background: var(--dark);
+
+    
+    /* title */
+    >.-title{
+        &::before{ content: "📂 "; }
+        >.-name{
+            display: block;
+            margin: 0;
+            z-index: 1;
+        }
+        box-shadow: 0 0.6rem 0.3rem -0.3rem var(--shadow);
+    }
+    /* list */
+    >ul{
+        border-top: black solid 0.2rem;
+        margin: 0;
+        margin: 0.8rem;
+        margin-top: 0;
+        margin-bottom: 0;
+        list-style: none;
+        padding: 0;
+        >li{
+            display: flex;
+            flex-direction: row;
+            >*{
+                flex-grow:1;
+            }
+            &:not(:first-child){
+                border-top: 0.1rem solid var(--dark);
+            }
+        }
+    }
+    &._closed>ul {display: none;}
+    &._opening>ul { animation: opening_directory 0.2s forwards; }
+    &._closing>ul { animation: opening_directory 0.2s reverse forwards; }
+    &._outline{ border: 0.3rem solid var(--black); }
+}
+/*@keyframes opening_directory{
+    from{ scale:1 0; translate: 0 -50%; margin-bottom: -40%; height: 100%;  }
+    to{ scale:1 1; margin-bottom: 0%; height: 100%;  }
+}*/
+@keyframes opening_directory{
+    from{ scale:1 0; translate: 0 -50%;  }
+    to{ scale:1 1;  }
+}
+@keyframes appearing{
+    from{ scale:1 0; translate: 0 -40%; margin-bottom: -100%; height: 100%; }
+    to{ scale:1 1; margin-bottom: 0%; height: 100%; }
+}
+/* */

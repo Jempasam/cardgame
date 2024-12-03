@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style/workbench.css">
+    <script type="module" src="js/view/workbench.js"></script>
+</head>
+<body class="pane _horizontal">
+    <aside class="pane _vertical _scrollable">
+        <h2>Fichiers</h2>
+        <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Similique, blanditiis placeat nisi necessitatibus perspiciatis consectetur unde beatae aliquam, dolor eos veniam nihil perferendis! Deserunt illo qui illum nemo, repellat voluptatibus!</p>
+        <div class="directory _outline" id="root" style="--dir-color:red">
+            <div class="-title">
+                <span class="-tag">root</span>
+                <span class="-name">Salades</span>
+                <span class="-icon">➕</span>
+                <span class="-delete">❌</span>
+            </div>
+            <ul>
+                <li>
+                    <div class="directory" style="--dir-color:blue">
+                        <div class="-title">
+                            <span class="-tag">📄scripts</span>
+                            <span class="-name">Salades</span>
+                            <span class="-icon">➕</span>
+                            <span class="-icon">❌</span>
+                        </div>
+                        <ul>
+                            <li><div class=file>
+                                <span class="-tag">📄script</span>
+                                <input type="text" class="-name"/>
+                                <span class="-icon">📋</span>
+                                <span class="-icon">❌</span>
+                            </div></li>
+                            <li><div class="file _appearing">
+                                <span class="-tag">📄script</span>
+                                <span class="-name">Fichier 1</span>
+                                <span class="-icon">📋</span>
+                                <span class="-icon">❌</span>
+                            </div></li>
+                            <li><div class="file _selected">
+                                <span class="-tag">📄script</span>
+                                <span class="-name">Fichier 1</span>
+                                <span class="-icon">📋</span>
+                                <span class="-icon">❌</span>
+                            </div></li>
+                        </ul>
+                    </div>
+                </li>
+                <li><div class="file">
+                    <span class="-tag">🖼️picture</span>
+                    <span class="-name">Fichier 1</span>
+                    <span class="-icon">📋</span>
+                                <span class="-icon">❌</span>
+                </div></li>
+                <li><div class="file _selected">
+                    <span class="-tag">🖼️picture</span>
+                    <span class="-name">Fichier 1</span>
+                    <span class="-icon">📋</span>
+                                <span class="-icon">❌</span>
+                </div></li>
+                <li><div class="file">
+                    <span class="-tag">🃏card</span>
+                    <span class="-name">Fichier 1</span>
+                    <span class="-icon">📋</span>
+                                <span class="-icon">❌</span>
+                </div></li>
+        </div>
+    </aside>
+    <main class="pane _vertical">
+        <h3>Salut les gens</h3>
+    </main>
+</body>
+</html>

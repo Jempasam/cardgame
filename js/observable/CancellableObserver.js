@@ -19,7 +19,7 @@ export class CancellableObserver{
      * Notify the observer and return false if the notification was cancelled
      * @template Y
      * @param {T} value 
-     * @param {()=>Y=} action An action to perform if the notification is not cancelled and before the after event
+     * @param {(cancel:()=>void)=>Y=} action An action to perform if the notification is not cancelled and before the after event
      * @param {(it:Y)=>void=} postaction An action to perform after the after event
      */
     notify(value, action, postaction){
@@ -29,9 +29,12 @@ export class CancellableObserver{
             this.cancel.notify(value)
             return false
         }else{
-            let it=action?.()
-            this.after.notify(value)
-            postaction?.(it)
+            let cancelled=false
+            let it=action?.(()=>cancelled=true)
+            if(!cancelled){
+                this.after.notify(value)
+                postaction?.(it)
+            }
             return true
         }
     }
