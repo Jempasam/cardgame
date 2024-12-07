@@ -6,6 +6,7 @@ html{
     --dark: #473a2b;
     --black: #292015;
     --shadow: #0000005c;
+    --select: #6df8fd;
     --border: url(../img/woodborder.png);
     --button: url(../img/plank.png);
     --file-back: url(../img/wood.png);
@@ -32,20 +33,21 @@ html,body{
     box-shadow: inset 0 0 .1rem 0.3rem var(--shadow);
     background-color: var(--light);
 
-    &._horizontal{
-        flex-direction: row;
-    }
-    &._vertical{
-        flex-direction: column;
-    }
+    &._horizontal{ flex-direction: row; }
+    &._vertical{ flex-direction: column; }
     &._scrollable{
         overflow-y:scroll;
+        scrollbar-width: 2rem;
+        scrollbar-color: var(--dark) var(--light);
     }
+    &._grow1{ flex-grow: 1; }
+    &._grow2{ flex-grow: 2; }
+    &._grow3{ flex-grow: 3; }
 }
 /* */
 
 /* TITLES */
-h1,h2,h3,h4,h5,h6{
+h1,h2,h3{
     display: block;
 
     border: 0.5rem solid;

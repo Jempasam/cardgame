@@ -3,13 +3,14 @@ import { FileExplorer } from "../editor/file_explorer.js"
 
 const root = document.getElementById("root")
 const workbench = new FileExplorer()
-root.replaceWith(workbench.createRootDirectoryElement({
+root.replaceWith(workbench.RootDirectory({
     type: "root",
     name: "Workbench",
     files:[
         {
             type: "📄script",
             name: "Scripts",
+            color: "red",
             files:[
                 {
                     type: "📄script",
@@ -31,6 +32,7 @@ root.replaceWith(workbench.createRootDirectoryElement({
         {
             type: "🖼️picture",
             name: "Pictures",
+            color: "green",
             files:[
                 {
                     type: "🖼️picture",
@@ -47,6 +49,7 @@ root.replaceWith(workbench.createRootDirectoryElement({
         {
             type: "🌟effects",
             name: "Effects",
+            color: "orange",
             files:[
                 {
                     type: "🌟effects",
@@ -66,4 +69,4 @@ root.replaceWith(workbench.createRootDirectoryElement({
             ]
         }
     ]
-}))
+}).element)

@@ -1,0 +1,167 @@
+
+form{
+    display: flex;
+    flex-direction: column;
+    margin: 1rem;
+    padding: .5rem;
+    background-color: var(--white);
+    border: 1rem solid;
+    border-image: var(--border) 25% round;
+    >*{
+        margin-left: 1rem;
+    }
+}
+
+label{
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: start;
+    color: var(--dark);
+    font-weight: bolder;
+    cursor: pointer;
+    &:not(:first-child){
+        margin: .1rem;
+        margin-top: .5rem;
+    }
+    &>*:first-child{
+        margin-left: 1rem;
+    }
+}
+
+/* TITLES */
+form>h4{
+    display: flex;
+    flex-direction: row;
+    justify-content:space-around;
+    align-items: center;
+    margin: 0;
+    margin-top: .5rem;
+    width: 100%;
+    font-variant-caps: all-small-caps;
+    font-size: 1.2rem;
+}
+form>h4::after, form>h4::before{
+    content: "";
+    display: block;
+    height: .1rem;
+    flex-grow: 1;
+    background-color: var(--dark);
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+/* */
+
+/* TEXT TYPE INPUTS */
+input, textarea, button, select, input::file-selector-button{
+    padding: .1rem;
+    background-color: var(--light);
+    border: .1rem solid var(--dark);
+    border-radius: .5rem;
+    cursor: pointer;
+    &:hover{
+        background-color: var(--white);
+        outline: var(--dark) solid .2rem;
+    }
+    &:focus{
+        outline: var(--select) solid .2rem;
+    }
+}
+
+input[type=text], input[type=number]{
+    max-width: 10rem;
+}
+/* */
+
+/* RANGE */
+input[type=range]{
+    appearance: none;
+    height: .2rem;
+}
+input[type=range]::-moz-range-thumb,
+input[type=range]::-webkit-slider-thumb{
+    background-color: var(--white);
+    border: .1rem solid var(--dark);
+    z-index: 1;
+}
+input[type=range]::-moz-range-progress,
+input[type=range]::-webkit-slider-fill{
+    background-color: var(--select);
+}
+/* */
+
+/* SELECT */
+select{
+    padding-left: 1rem;
+    padding-right: 1rem;
+    width: 15rem;
+}
+/* */
+
+/* CHECKBOX AND RADIO BUTTON */
+input[type=checkbox], input[type=radio]{
+    appearance: none;
+    width: 1rem;
+    height: 1rem;
+    border: .1rem solid var(--dark);
+    border-radius: .2rem;
+    cursor: pointer;
+    &:checked{
+        background-color: var(--select);
+    }
+}
+/* */
+
+/* FIELDSET */
+fieldset{
+    margin-top: .5rem;
+    border: .1rem solid var(--dark);
+    border-radius: .5rem;
+    padding: 0;
+    padding-bottom: 0.5rem;
+    padding-left: 0.5rem;
+}
+/* */
+
+/* FILE */
+input[type=file]{
+    appearance: none;
+    width: 20rem;
+}
+/* */
+
+/* BUTTON */
+button, input[type=button], input[type=submit], input[type=reset], input[type=file]::file-selector-button{
+    padding: 0.2rem;
+    padding-left: .5rem;
+    padding-right: .5rem;
+    cursor: pointer;
+    width: 10rem
+}
+/* */
+
+/* COLOR */
+input[type=color]{
+    appearance: none;
+    height: 2rem;
+    width: 2rem;
+}
+input[type=color]::-webkit-color-swatch,
+input[type=color]::-moz-color-swatch{
+    border-radius: .5rem;
+    border: .1rem solid var(--dark);
+}
+/* */
+
+.horizontal-group{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    border: .1rem solid var(--dark);
+    border-radius: .8rem;
+    margin-left: 1rem;
+    >*{
+        margin: .2rem;
+    }
+}
