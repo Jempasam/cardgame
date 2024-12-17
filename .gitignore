@@ -1,0 +1,9 @@
+# Node files #
+node_modules
+npm-debug.log
+
+
+
+# IDE Files #
+.vscode
+.idea
