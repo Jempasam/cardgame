@@ -16,7 +16,10 @@ html{
 body{
     height: 100%;
     width: 100%;
+    box-sizing: border-box;
     margin: 0;
+    padding-left: 4rem;
+    padding-right: 4rem;
     &::after{
         content: '';
         background-image: url('../img/bricks.png');

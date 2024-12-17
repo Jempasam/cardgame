@@ -1,81 +1,46 @@
 
 /**
- * A set of function.
+ * A observable object.
  * @template T
+ * @abstract
  */
 export class Observable{
 
-    #observers = new Set()
-
-    /**
-     * 
-     * @param {Observable<T>=} parent 
-     */
-    constructor(parent){
-        this.parent = parent
-    }
-    
     /**
      * Register an observer
-     * @param {function(T):void} observer
-     * @returns {function():void}
+     * @param {function(T):void} observer The function to call on notification.
+     * @abstract
      */
     register(observer){
-        this.#observers.add(observer)
-        return ()=> this.#observers.delete(observer)
+        throw new Error("Not implemented")
     }
 
     /**
      * Unregister an observer
-     * @param {function(T):void} observer
+     * @param {function(T):void} observer The function to call on notification.
+     * @abstract
      */
     unregister(observer){
-        this.#observers.delete(observer)
+        throw new Error("Not implemented")
     }
 
     /**
      * Send a notification to the observers
      * @param {T} notification
+     * @abstract
      */
     notify(notification){
-        for(let o of this.#observers)o(notification)
-        if(this.parent)this.parent.notify(notification)
-    }
-    
-}
-
-/**
- * An helper object for handling a listener registrer on multiple observables.
- * @template T
- */
-class MultiListener{
-    
-    /**
-     * Register multiple listeners and save them to be able to unregister them later.
-     * @param {(T)=>void} listener 
-     * @param  {...Observable<T>} observables 
-     */
-    constructor(listener, ...observables){
-        this.listener = listener
-        this.observables = observables
-        for(let o of observables)o.register(this.listener)
+        throw new Error("Not implemented")
     }
 
     /**
-     * Unregister the listeners
+     * Register an observer and return a function to unregister it.
+     * @param {function(T):void} observer The function to call on notification.
+     * @returns {function():void} A function to call to unregister the observer.
      */
-    free(){
-        for(let o of this.observables)o.unregister(this.listener)
+    add(observer){
+        this.register(observer)
+        return ()=>this.unregister(observer)
     }
-}
 
-/**
- * Register a listener on multiple observables.
- * Returns an object that can be used to unregister the listener.
- * @template T
- * @param {(T)=>void} listener 
- * @param  {...Observable<T>} observables 
- */
-export function listen_all(listener, ...observables){
-    return new MultiListener(listener, ...observables)
 }

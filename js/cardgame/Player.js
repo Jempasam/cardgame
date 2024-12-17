@@ -3,11 +3,11 @@ import { Status } from "./status/Status.js";
 import { Game } from "./Game.js";
 import { Picture } from "./icon/Picture.js";
 import { Field } from "./piece/Field.js";
-import { MOArray } from "../observable/OArray.js";
 import { StatusType } from "./status/StatusType.js";
-import { MOAutoMap } from "../observable/OAutoMap.js";
+import { MOAutoMap } from "../observable/collections/OAutoMap.js";
 import { JaugeType } from "./jauge/JaugeType.js";
 import { Jauge } from "./jauge/Jauge.js";
+import { MOArray } from "../observable/collections/OArray.js";
 
 /**
  * @typedef {Object} PlayerContext

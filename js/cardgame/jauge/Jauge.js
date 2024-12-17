@@ -1,4 +1,4 @@
-import { MOValue, OValue } from "../../observable/OValue.js";
+import { MOValue, OValue } from "../../observable/collections/OValue.js";
 import { JaugeType } from "./JaugeType.js";
 
 

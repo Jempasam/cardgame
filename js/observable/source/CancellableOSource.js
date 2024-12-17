@@ -1,19 +1,19 @@
-import { Observable } from "./Observable.js";
+import { OSource } from "./OSource.js";
 
 
 /**
  * @template T
  */
-export class CancellableObserver{
+export class CancellableOSource{
 
-    /** @type {Observable<T&{cancel:boolean}>} */
-    before= new Observable()
+    /** @type {OSource<T&{cancel:boolean}>} */
+    before= new OSource()
 
-    /** @type {Observable<T>} */
-    after= new Observable()
+    /** @type {OSource<T>} */
+    after= new OSource()
 
-    /** @type {Observable<T>} */
-    cancel= new Observable()
+    /** @type {OSource<T>} */
+    cancel= new OSource()
 
     /**
      * Notify the observer and return false if the notification was cancelled

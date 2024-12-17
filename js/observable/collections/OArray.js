@@ -1,5 +1,5 @@
-import { FriendlyIterable } from "../utils/FriendlyIterable.js"
-import { Observable } from "./Observable.js"
+import { FriendlyIterable } from "../../utils/FriendlyIterable.js"
+import { OSource } from "../source/OSource.js"
 
 /**
  * A observable array
@@ -7,16 +7,16 @@ import { Observable } from "./Observable.js"
  */
 export class OArrayObservable{
 
-    /** @type {Observable<{value:T,index:number}>} */ on_add
+    /** @type {OSource<{value:T,index:number}>} */ on_add
 
-    /** @type {Observable<{value:T,index:number}>} */ on_remove
+    /** @type {OSource<{value:T,index:number}>} */ on_remove
 
     /**
      * @param {OArrayObservable<T>=} parent
      */
     constructor(parent){
-        this.on_add = new Observable(parent?.on_add)
-        this.on_remove = new Observable(parent?.on_remove)
+        this.on_add = new OSource(parent?.on_add)
+        this.on_remove = new OSource(parent?.on_remove)
     }
 }
 

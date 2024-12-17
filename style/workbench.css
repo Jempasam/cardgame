@@ -193,3 +193,20 @@ p{
     to{ scale:1 1; margin-bottom: 0%; height: 100%; }
 }
 /* */
+
+/* BLOCKLY */
+.blocklyMainBackground{
+    fill: transparent !important;
+}
+.blocklySvg{
+    background: none;
+}
+.blocklyToolboxDiv, .blocklyFlyoutBackground{
+    background-color: var(--mid);
+    fill: var(--mid);
+    color: var(--white);
+    box-shadow: 0 0 0.5rem 0.2rem var(--shadow);
+}
+.blocklyPathDark{
+}
+/* */

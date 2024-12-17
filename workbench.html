@@ -7,7 +7,13 @@
     <title>Document</title>
     <link rel="stylesheet" href="style/workbench.css" />
     <link rel="stylesheet" href="style/inputs.css" />
+    
+    <script defer="true" src="node_modules/blockly/blockly_compressed.js"></script>
+    <script defer="true" src="node_modules/blockly/blocks_compressed.js"></script>
+    <script defer="true" src="node_modules/blockly/javascript_compressed.js"></script>
+    <script defer="true" src="node_modules/blockly/msg/fr.js" crossorigin="anonymous"></script>
     <script type="module" src="js/view/workbench.js"></script>
+
 </head>
 
 <body class="pane _horizontal">
@@ -23,6 +29,8 @@
     </aside>
     <main class="pane _vertical _scrollable _grow2">
         <h3>Salut les gens</h3>
+        <div id="blocklyDiv" style="min-width: 100%; min-height: 80%; flex-grow:1;"></div>
+        <!--
         <form>
             <h3>Hello</h3>
             <label for="text">
@@ -79,6 +87,7 @@
                 <label for="team-greena"><input type="radio" name="teama" id="team-greena" value="green" /> Vert</label>
             </fieldset>
         </form>
+        -->
     </main>
 </body>
 

@@ -1,7 +1,7 @@
-import { CancellableObserver } from "../observable/CancellableObserver.js";
-import { MOArray } from "../observable/OArray.js";
-import { Observable } from "../observable/Observable.js";
-import { MOValue } from "../observable/OValue.js";
+import { MOArray } from "../observable/collections/OArray.js";
+import { MOValue } from "../observable/collections/OValue.js";
+import { CancellableOSource } from "../observable/source/CancellableOSource.js";
+import { OSource } from "../observable/source/OSource.js";
 import { Card } from "./card/Card.js";
 import { Player } from "./Player.js";
 
@@ -75,15 +75,15 @@ export class Game{
         )
     }
 
-    /** @type {CancellableObserver<{game:Game, player:Player, card:Card, cancelled:boolean}>} */
-    on_play_card = new CancellableObserver()
+    /** @type {CancellableOSource<{game:Game, player:Player, card:Card, cancelled:boolean}>} */
+    on_play_card = new CancellableOSource()
 
-    /** @type {CancellableObserver<{game:Game, player:Player, card:Card, cancelled:boolean}>} */
-    on_draw_card = new CancellableObserver()
+    /** @type {CancellableOSource<{game:Game, player:Player, card:Card, cancelled:boolean}>} */
+    on_draw_card = new CancellableOSource()
 
-    /** @type {CancellableObserver<import("./card/CardEffect.js").CardEffectContext&{type:"draw"|"play"|"discard"|"start"}>} */
-    on_card_effect = new CancellableObserver()
+    /** @type {CancellableOSource<import("./card/CardEffect.js").CardEffectContext&{type:"draw"|"play"|"discard"|"start"}>} */
+    on_card_effect = new CancellableOSource()
 
-    /** @type {Observable<{game:Game}>} */
-    on_game_start = new Observable()
+    /** @type {OSource<{game:Game}>} */
+    on_game_start = new OSource()
 }

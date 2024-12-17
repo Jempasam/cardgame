@@ -1,6 +1,6 @@
-import { FriendlyIterable } from "../utils/FriendlyIterable.js"
+import { FriendlyIterable } from "../../utils/FriendlyIterable.js"
 import { MOArray, OArray, OArrayObservable } from "./OArray.js"
-import { Observable } from "./Observable.js"
+import { OSource } from "../source/OSource.js"
 
 
 /**
@@ -10,13 +10,13 @@ import { Observable } from "./Observable.js"
  */
 export class OMapObservable{
 
-    /** @type {Observable<{key:K, from:T|null, to:T|null}>} */ on_change
+    /** @type {OSource<{key:K, from:T|null, to:T|null}>} */ on_change
 
     /**
      * @param {OMapObservable<K,T>=} parent 
      */
     constructor(parent){
-        this.on_change = new Observable(parent?.on_change)
+        this.on_change = new OSource(parent?.on_change)
     }
 }
 

@@ -1,5 +1,5 @@
-import { OArray } from "../../observable/OArray.js";
-import { MOMap, OMap } from "../../observable/OMap.js";
+import { OArray } from "../../observable/collections/OArray.js";
+import { MOMap, OMap } from "../../observable/collections/OMap.js";
 import { html } from "../../utils/doc.js";
 import { PromiseChain, sleep } from "../../utils/promises.js";
 import { Card } from "../card/Card.js";

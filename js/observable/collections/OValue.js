@@ -1,4 +1,4 @@
-import { Observable } from "./Observable.js"
+import { OSource } from "../source/OSource.js"
 
 
 /**
@@ -7,7 +7,7 @@ import { Observable } from "./Observable.js"
 export class OValue{
 
     /** @type {T} */ _value
-    /** @type {Observable<{from:T, to:T}>=} */ observable
+    /** @type {OSource<{from:T, to:T}>=} */ observable
 
     /** @protected */ constructor(){}
 
@@ -34,11 +34,11 @@ export class MOValue extends OValue{
     /**
      * 
      * @param {T} value 
-     * @param {Observable<{from:T, to:T}>=} parent
+     * @param {OSource<{from:T, to:T}>=} parent
      */
     constructor(value, parent){
         super()
-        this.observable = new Observable(parent)
+        this.observable = new OSource(parent)
         this._value=value
     }
 
