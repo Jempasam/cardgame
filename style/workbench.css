@@ -33,8 +33,8 @@ html,body{
     box-shadow: inset 0 0 .1rem 0.3rem var(--shadow);
     background-color: var(--light);
 
-    &._horizontal{ flex-direction: row; }
-    &._vertical{ flex-direction: column; }
+    &._horizontal{ flex-direction: row; border-right: none; border-left: none; }
+    &._vertical{ flex-direction: column; border-top:none; border-bottom: none; }
     &._scrollable{
         overflow-y:scroll;
         scrollbar-width: 2rem;
@@ -43,8 +43,19 @@ html,body{
     &._grow1{ flex-grow: 1; }
     &._grow2{ flex-grow: 2; }
     &._grow3{ flex-grow: 3; }
+    &._fill{ >*{width: 100%;} }
 }
 /* */
+
+/* CODEBLOCK */
+pre{
+    padding: .5rem;
+    margin: 0;
+    font-size: 0.9rem;
+    background-color: var(--white);
+    border: 0.2rem solid var(--dark);
+    text-wrap-mode: wrap;
+}
 
 /* TITLES */
 h1,h2,h3{
@@ -143,7 +154,7 @@ p{
     flex-direction: column;
     padding: 0;
     background: var(--dark);
-
+    height: fit-content;
     
     /* title */
     >.-title{
@@ -208,5 +219,10 @@ p{
     box-shadow: 0 0 0.5rem 0.2rem var(--shadow);
 }
 .blocklyPathDark{
+}
+.blocklyTreeRow{
+    height: 30px;
+    border-bottom: 0.1rem solid var(--dark);
+    cursor: pointer;
 }
 /* */

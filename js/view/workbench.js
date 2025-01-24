@@ -1,29 +1,29 @@
-import { FileExplorer } from "../editor/file_explorer.js"
-
-/** @type {import("../../node_modules/blockly/index.js")} */ 
-const Blockly = window.Blockly
+import { Blockly, Javascript } from "../workbench/blockly.mjs"
+import { FileExplorer, FILL, NOTHING } from "../editor/file_explorer.js"
+import globalWorkbench, { registrerGlobalCategories } from "../workbench/global.js"
 
 const root = document.getElementById("root")
 const workbench = new FileExplorer()
-root.replaceWith(workbench.RootDirectory({
+const output = document.getElementById("output")
+const directory = workbench.RootDirectory({
     type: "root",
     name: "Workbench",
+    rights: NOTHING,
     files:[
         {
             type: "📄script",
             name: "Scripts",
             color: "red",
+            rights: FILL,
             files:[
                 {
                     type: "📄script",
                     name: "index.js",
-                    content: "console.log('hello world')"
-                },
+                    content: "console.log('hello world')"},
                 {
                     type: "📄script",
                     name: "main.js",
-                    content: "console.log('hello world')"
-                },
+                    content: "console.log('hello world')"},
                 {
                     type: "📄script",
                     name: "app.js",
@@ -35,12 +35,12 @@ root.replaceWith(workbench.RootDirectory({
             type: "🖼️picture",
             name: "Pictures",
             color: "green",
+            rights: FILL,
             files:[
                 {
                     type: "🖼️picture",
                     name: "background.jpg",
-                    content: "data:image/jpeg;base64,..."
-                },
+                    content: "data:image/jpeg;base64,..."},
                 {
                     type: "🖼️picture",
                     name: "logo.png",
@@ -49,267 +49,105 @@ root.replaceWith(workbench.RootDirectory({
             ]
         },
         {
+            type: "🥪food",
+            name: "Food",
+            color: "brown",
+            rights: FILL,
+            files:[
+                {
+                    type: "🥪food",
+                    name: "Hot Dog",
+                    content: "data:image/jpeg;base64,..."},
+                {
+                    type: "🥪food",
+                    name: "Sandwich",
+                    content: "data:image/png;base64,..."
+                }
+            ]
+        },
+        {
             type: "🌟effects",
             name: "Effects",
             color: "orange",
+            rights: FILL,
             files:[
                 {
                     type: "🌟effects",
                     name: "Zombified",
-                    content: "data:application/json;base64,..."
-                },
+                    content: "data:application/json;base64,..."},
                 {
                     type: "🌟effects",
                     name: "Vampire",
-                    content: "data:application/json;base64,..."
-                },
+                    content: "data:application/json;base64,..."},
                 {
                     type: "🌟effects",
                     name: "Werewolf",
                     content: "data:application/json;base64,..."
                 }
             ]
-        }
-    ]
-}).element)
-
-/** @type {import("../../node_modules/blockly/core/utils/toolbox.js").ToolboxInfo} */ 
-const toolbox = {
-    kind: 'categoryToolbox',
-    contents: [
-        {
-            kind: 'category',
-            name: 'Variable',
-            contents:[
-                {
-                    kind: 'block',
-                    type: 'variables_get'
-                },
-                {
-                    kind: 'block',
-                    type: 'variables_set'
-                },
-            ]
         },
         {
-            kind: 'category',
-            name: 'Control Flow',
-            contents:[
+            type: "🌡️jauges",
+            name: "Jauges",
+            color: "purple",
+            rights: FILL,
+            files:[
                 {
-                    kind: 'block',
-                    type: 'controls_if'
-                },
+                    type: "🌡️jauges",
+                    name: "Vie",
+                    content: "data:application/json;base64,..."},
                 {
-                    kind: 'block',
-                    type: 'controls_repeat_ext'
-                },
+                    type: "🌡️jauges",
+                    name: "Faim",
+                    content: "data:application/json;base64,..."},
                 {
-                    kind: 'block',
-                    type: 'controls_whileUntil'
-                },
+                    type: "🌡️jauges",
+                    name: "Mana",
+                    content: "data:application/json;base64,..."},
                 {
-                    kind: 'block',
-                    type: 'controls_for',
-                    inputs: {
-                        FROM: { block: { type: 'math_number' } },
-                        TO: { block: { type: 'math_number' } },
-                        BY: { block: { type: 'math_number', fields: {NUM:1} } }
-                    }
-                },
+                    type: "🌡️jauges",
+                    name: "Or",
+                    content: "data:application/json;base64,..."},
                 {
-                    kind: 'block',
-                    type: 'controls_forEach'
-                },
-                {
-                    kind: 'block',
-                    type: 'controls_flow_statements'
+                    type: "🌡️jauges",
+                    name: "Maladie",
+                    content: "data:application/json;base64,..."
                 }
             ]
-        },
-        {
-            kind: 'category',
-            name: 'Logic',
-            contents:[
-                {
-                    kind: 'block',
-                    type: 'logic_compare'
-                },
-                {
-                    kind: 'block',
-                    type: 'logic_operation'
-                },
-                {
-                    kind: 'block',
-                    type: 'logic_negate'
-                },
-                {
-                    kind: 'block',
-                    type: 'logic_boolean'
-                },
-            ]
-        },
-        {
-            kind: 'category',
-            name: 'Math',
-            contents:[
-                {
-                    kind: 'block',
-                    type: 'math_number'
-                },
-                {
-                    kind: 'block',
-                    type: 'math_arithmetic'
-                },
-                {
-                    kind: 'block',
-                    type: 'math_single'
-                },
-                {
-                    kind: 'block',
-                    type: 'math_trig'
-                },
-                {
-                    kind: 'block',
-                    type: 'math_constant'
-                },
-                {
-                    kind: 'block',
-                    type: 'math_number_property'
-                },
-                {
-                    kind: 'block',
-                    type: 'math_round'
-                },
-                {
-                    kind: 'block',
-                    type: 'math_on_list'
-                },
-                {
-                    kind: 'block',
-                    type: 'math_modulo'
-                },
-                {
-                    kind: 'block',
-                    type: 'math_constrain'
-                },
-                {
-                    kind: 'block',
-                    type: 'math_random_int'
-                },
-                {
-                    kind: 'block',
-                    type: 'math_random_float'
-                },
-            ]
-        },
-        {
-            kind: 'category',
-            name: 'Text',
-            contents:[
-                {
-                    kind: 'block',
-                    type: 'text'
-                },
-                {
-                    kind: 'block',
-                    type: 'text_join'
-                },
-                {
-                    kind: 'block',
-                    type: 'text_append'
-                },
-                {
-                    kind: 'block',
-                    type: 'text_length'
-                },
-                {
-                    kind: 'block',
-                    type: 'text_isEmpty'
-                },
-                {
-                    kind: 'block',
-                    type: 'text_indexOf'
-                },
-                {
-                    kind: 'block',
-                    type: 'text_charAt'
-                },
-                {
-                    kind: 'block',
-                    type: 'text_getSubstring'
-                },
-                {
-                    kind: 'block',
-                    type: 'text_changeCase'
-                },
-                {
-                    kind: 'block',
-                    type: 'text_trim'
-                },
-                {
-                    kind: 'block',
-                    type: 'text_print'
-                },
-            ]
-        },
-        {
-            kind: 'category',
-            name: 'Lists',
-            contents:[
-                {
-                    kind: 'block',
-                    type: 'lists_create_with'
-                },
-                {
-                    kind: 'block',
-                    type: 'lists_create_empty'
-                },
-                {
-                    kind: 'block',
-                    type: 'lists_repeat'
-                },
-                {
-                    kind: 'block',
-                    type: 'lists_length'
-                },
-                {
-                    kind: 'block',
-                    type: 'lists_isEmpty'
-                },
-                {
-                    kind: 'block',
-                    type: 'lists_indexOf'
-                },
-                {
-                    kind: 'block',
-                    type: 'lists_getIndex'
-                },
-                {
-                    kind: 'block',
-                    type: 'lists_setIndex'
-                },
-                {
-                    kind: 'block',
-                    type: 'lists_getSublist'
-                },
-                {
-                    kind: 'block',
-                    type: 'lists_split'
-                },
-                {
-                    kind: 'block',
-                    type: 'lists_sort'
-                },
-            ]
         }
+    ]
+})
+directory.item.on_remove = (path, item) => {
+    return path.length > 1
+}
+directory.item.on_add = (path, item) => {
+    console.log(path, item)
+    item.name = "Salade"
+    return path[0]==0
+}
+root.replaceWith(directory.element)
 
-    ],
-  };
+/** @type {import("../../node_modules/blockly/core/utils/toolbox.js").ToolboxInfo} */ 
+Blockly.ContextMenuItems.registerCommentOptions();
+const toolbox = {
+    kind: 'categoryToolbox',
+    contents: [...globalWorkbench],
+};
 
-  Blockly.inject('blocklyDiv', {
+const workspace=Blockly.inject('blocklyDiv', {
     toolbox: toolbox,
     media: '/media/',
     scrollbars: true,
     horizontalLayout:false,
     toolboxPosition: "end",
-  });
+});
+registrerGlobalCategories(workspace)
+
+window.addEventListener("keypress", e=>{
+    if(e.key=="s"){
+        output.innerText = JSON.stringify(Blockly.serialization.workspaces.save(workspace))
+    }
+    if(e.key=="g"){
+        output.innerText = Javascript.javascriptGenerator.workspaceToCode(workspace)
+    }
+})

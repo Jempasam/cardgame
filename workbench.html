@@ -7,25 +7,23 @@
     <title>Document</title>
     <link rel="stylesheet" href="style/workbench.css" />
     <link rel="stylesheet" href="style/inputs.css" />
-    
-    <script defer="true" src="node_modules/blockly/blockly_compressed.js"></script>
-    <script defer="true" src="node_modules/blockly/blocks_compressed.js"></script>
-    <script defer="true" src="node_modules/blockly/javascript_compressed.js"></script>
-    <script defer="true" src="node_modules/blockly/msg/fr.js" crossorigin="anonymous"></script>
     <script type="module" src="js/view/workbench.js"></script>
 
 </head>
 
 <body class="pane _horizontal">
     <aside class="pane _vertical _scrollable _grow1">
-        <h2>Fichiers</h2>
-        <p>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Similique,
-            blanditiis placeat nisi necessitatibus perspiciatis consectetur unde
-            beatae aliquam, dolor eos veniam nihil perferendis! Deserunt illo qui
-            illum nemo, repellat voluptatibus!
-        </p>
-        <div id="root"></div>
+        <div class="pane _horizontal _scrollable _fill">
+            <div id="root"></div>
+        </div>
+        <div class="pane _horizontal _scrollable _fill">
+            <pre id="output" style="height: fit-content;">
+azaz
+azzaa
+azazz
+az
+            </pre>
+        </div>
     </aside>
     <main class="pane _vertical _scrollable _grow2">
         <h3>Salut les gens</h3>

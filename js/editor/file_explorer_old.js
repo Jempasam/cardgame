@@ -2,13 +2,9 @@ import { html } from "../utils/doc.js"
 import { sleep } from "../utils/promises.js"
 
 
-export const NOTHING = 0
-export const FILL = 1
-export const MODIFY = 2
-export const REMOVE = 3
 /**
- * @typedef {{type?:string, color?:string, name:string, rights?:number, content:any}} File
- * @typedef {{type?:string, color?:string, name:string, rights?:number, files:(File|Directory)[]}} Directory
+ * @typedef {{type?:string, color?:string, name:string, content:any}} File
+ * @typedef {{type?:string, color?:string, name:string, files:(File|Directory)[]}} Directory
  * 
  */
 export class FileExplorer{
@@ -52,33 +48,11 @@ export class FileExplorer{
 
 FileExplorer.Item = class{
 
-    /**
-     * Called when the item is removed, with the path of the removed item.
-     * The item removal is cancellable.:
-     * @type {(removed:number[])=>boolean}
-     **/
-    on_remove = ()=>true
-    
-    /**
-     * Called when a file is created with the path of the created file.
-     * Can be cancelled.
-     * @type {(added:number[],file:File|Directory)=>boolean}
-     **/
-    on_add = ()=>true
 
-    /**
-     * Called when the child is selected, with the path of the selected item.
-     * The selection is cancellable.
-     * @type {(selected:number[])=>boolean}
-     **/
-    on_select = ()=>true
-
-    /**
-     * Called when a child is renamed, with the path of the renamed item.
-     * The renaming is cancellable.
-     * @type {(before:string, after:string, path:number[])=>boolean}
-     **/
-    on_rename = ()=>true
+    /** @type {(added: number[])=>void} */  on_add = ()=>{}
+    /** @type {(removed:number[])=>void} */  on_remove = ()=>{}
+    /** @type {(selected:number[])=>void} */  on_select = ()=>{}
+    /** @type {(before:string, after:string, path:number[])=>void} */  on_rename = ()=>{}
 
     /**
      * Create a element reprensenting a file.
@@ -91,18 +65,17 @@ FileExplorer.Item = class{
     }
 
     /**
-     * Rename the item, throw the rename event.
+     * Rename the item
      * @param {string} new_name 
      */
     rename(new_name){
-        const before = this.file.name
-        this.file.name=new_name
-        if(this.on_rename(before,new_name,[])){
-            this.explorer.synchronised(async()=>{
-                this.name.innerText=new_name
-                this.header.ariaLabel=new_name
-            })()
-        }
+        this.explorer.synchronised(async()=>{
+            const before = this.file.name
+            this.file.name=new_name
+            this.name.innerText=new_name
+            this.header.ariaLabel=new_name
+            this.on_rename(before, new_name, [])
+        })()
     }
 
     /**
@@ -110,13 +83,11 @@ FileExplorer.Item = class{
      * @param {boolean=} force
      */
     remove(force=false){
-        if(force || confirm("Are you sure you want to delete this file?")){
-            if(this.on_remove([])){
-                // Do nothing, a file cannot remove itself, because it don't know its parent.
-                // A file can also have multiple parents.
-                // The parent should remove the file itself.
+        this.explorer.synchronised(async()=>{
+            if(force || confirm("Are you sure you want to delete this file?")){
+                this.on_remove([])
             }
-        }
+        })()
     }
 
     /**
@@ -128,17 +99,13 @@ FileExplorer.Item = class{
         const that =this
         let tag = html.opt`<span class="-tag">${file.type}</span>`
         this.name = html.a`<span class="-name">${file.name}</span>`
-
-        let remove = null
-        if((file.rights??REMOVE)>=REMOVE){
-            async function on_remove(e){
-                e.stopPropagation()
-                that.remove()
-            }
-            remove = html.a`<span class="-icon" @${{click:explorer.synchronised(on_remove)}}>❌</span>`
-        }
-
+        let remove = html.a`<span class="-icon" @${{click:explorer.synchronised(on_remove)}}>❌</span>`
         let header = html.a`<div aria-label="${file.name}" tabindex=0 @${{click:explorer.synchronised(on_rename_or_select)}}>${tag} ${that.name} ${remove}</div>`
+
+        async function on_remove(e){
+            e.stopPropagation()
+            that.remove()
+        }
 
         header.draggable = true
         header.ondragstart = e => {
@@ -170,21 +137,20 @@ FileExplorer.Item = class{
             else{
                 clearTimeout(the_select)
                 the_select=null
-                if((file.rights??REMOVE)>=MODIFY){
-                    const from = that.name.innerText
-                    const name_input = /** @type {HTMLInputElement} */ (html.a`<input class="-name" type="text" value="${that.name.textContent}" }}>`)
-                    name_input.onblur = name_input.onchange = e=>{
-                        const new_name = name_input.value
-                        const name_element = html.a`<span class="-name">${file.name}</span>`
-                        that.name.replaceWith(name_element)
-                        that.name = name_element
-                        that.rename(new_name)
-                    }
-                    that.name.replaceWith(name_input)
-                    name_input.focus()
-                    name_input.select()
-                    that.name=name_input
+                const from = that.name.innerText
+                const name_input = /** @type {HTMLInputElement} */ (html.a`<input class="-name" type="text" value="${that.name.textContent}" }}>`)
+                name_input.onblur = name_input.onchange = e=>{
+                    const new_name = name_input.value
+                    const name_element = html.a`<span class="-name">${file.name}</span>`
+                    that.name.replaceWith(name_element)
+                    that.name = name_element
+                    that.rename(new_name)
                 }
+                that.name.replaceWith(name_input)
+                name_input.focus()
+                name_input.select()
+                name_input
+                that.name=name_input
             }
         }
         this.header=header
@@ -194,13 +160,9 @@ FileExplorer.Item = class{
 
 FileExplorer.File = class{
 
-    /**
-     * Called when the file is dropped on another file, with the file dropped on.
-     * @type {()=>boolean}
-     **/
-    on_duplicate = ()=>true
+    /** @type {()=>void} */ on_duplicate = ()=>{} 
 
-    /** @type {(file:File|Directory)=>boolean} */ on_drop_on = () => false
+    /** @type {(file:File|Directory)=>Promise<boolean>} */ on_drop_on = async()=>{return false} 
 
     /**
      * @param {FileExplorer} explorer 
@@ -227,7 +189,7 @@ FileExplorer.File = class{
             if(!data) return
             const {uuid,file} = data
             if(uuid!=this.file["uuid"]){
-                if(this.on_drop_on(file)){
+                if(await this.on_drop_on(file)){
                     if(uuid==explorer.dragged.uuid){
                         explorer.dragged.item.remove(true)
                     }
@@ -282,24 +244,21 @@ FileExplorer.Directory = class{
     /**
      * Remove a child from the directory
      * @param {File|Directory} file
-     * @returns {boolean}
      */
     remove_child(file){
         const {explorer} = this.item
         const {directory} = this
-        let index = directory.files.indexOf(file); if(index==-1)return
-        if(this.item.on_remove([index])){
+        explorer.synchronised(async()=>{
+            let index = directory.files.indexOf(file); if(index==-1)return
+            let element = this.list.children[index]
+            console.log(index,element)
+            element.firstElementChild.classList.add("_disappearing")
+            await sleep(200)
+            element.firstElementChild.classList.remove("_disappearing")
+            element.remove()
             directory.files.splice(index,1)
-            explorer.synchronised(async()=>{
-                let element = this.list.children[index]
-                element.firstElementChild.classList.add("_disappearing")
-                await sleep(200)
-                element.firstElementChild.classList.remove("_disappearing")
-                element.remove()
-            })()
-            return true
-        }
-        else return false
+            this.item.on_remove([index])
+        })()
     }
 
     /**
@@ -313,27 +272,29 @@ FileExplorer.Directory = class{
 
         let child = explorer.ItemOrDirectory(file)
 
-        child.item.on_remove = (p)=>{
-            if(p.length==0) return this.remove_child(file)
-            else return this.item.on_remove([index,...p])
-        }
+        child.item.on_remove = explorer.synchronised(async(p)=>{
+            if(p.length==0) this.remove_child(file)
+            else this.item.on_remove([...p,index])
+        })
 
-        child.item.on_select = (p) => this.item.on_select([index,...p])
+        child.item.on_add = explorer.synchronised(async(p) => this.item.on_add([...p,index]) )
 
-        child.item.on_rename = (before,after,p) => this.item.on_rename(before,after,[index,...p])
+        child.item.on_select = explorer.synchronised(async(p) => this.item.on_select([...p,index]) )
 
-        child.item.on_add = (p,f) => this.item.on_add([index,...p],f)
+        //@ts-ignore
+        child.item.on_rename = explorer.synchronised(async(before,after,p) => this.item.on_rename(before,after,[...p,index]) )
 
         if(child instanceof FileExplorer.File){
-            child.on_duplicate = ()=>{
-                let index = this.directory.files.indexOf(file); if(index==-1)return false
+            child.on_duplicate = explorer.synchronised(async()=>{
+                let index = this.directory.files.indexOf(file); if(index==-1)return
                 let new_file = structuredClone(file)
-                return this.add_child(index+1,new_file)
-            }
-            child.on_drop_on = (added)=>{
+                this.add_child(index+1,new_file)
+            })
+            child.on_drop_on = async(added)=>{
                 const index = this.directory.files.indexOf(file)
                 if(index==-1)return false
-                return this.add_child(index+1,added)
+                this.add_child(index+1,added)
+                return true
             }
         }
 
@@ -346,23 +307,21 @@ FileExplorer.Directory = class{
      * @param {File|Directory} file 
      */
     add_child(index,file){
-        if(this.item.on_add([index],file)){
+        this.item.explorer.synchronised(async()=>{
+            let child = this.#create_child(file, index)
+            let item = html.a`<li>${child.element}</li>`
+            
+            child.element.classList.add("_appearing")
             this.directory.files.splice(index, 0, file)
-            this.item.explorer.synchronised(async()=>{
-                let child = this.#create_child(file, index)
-                let item = html.a`<li>${child.element}</li>`
-                child.element.classList.add("_appearing")
-                if(index==this.list.children.length) this.list.append(item)
-                else this.list.children[index].before(item) 
-                await sleep(200)
-                child.element.classList.remove("_appearing")
-                if(index==this.list.children.length) this.list.append(item)
-                else this.list.children[index].before(item)
+            if(index==this.list.children.length) this.list.append(item)
+            else this.list.children[index].before(item) 
+            await sleep(200)
+            child.element.classList.remove("_appearing")
+            
+            if(index==this.list.children.length) this.list.append(item)
+            else this.list.children[index].before(item)
 
-            })()
-            return true
-        }
-        else return false
+        })()
     }
 
     hide(){
@@ -417,12 +376,13 @@ FileExplorer.Directory = class{
             e.stopPropagation()
             const data = JSON.parse(e.dataTransfer.getData("text/file"))
             if(!data) return
+            console.log(data)
             const {uuid,file} = data
             if(uuid!=this.directory["uuid"]){
-                if(uuid==explorer.dragged.uuid && this.add_child(0,file)){
+                if(uuid==explorer.dragged.uuid){
                     explorer.dragged.item.remove(true)
                 }
-                
+                this.add_child(0,file)
             }
         }
 
@@ -432,14 +392,8 @@ FileExplorer.Directory = class{
         header.classList.add("-title")
         header.children[1].after(html`
             <span class="-icon" @${{init:it=>this.hide_show_button=/** @type {HTMLElement} */ (it)}}>▼</span>
-            ${
-                (this.directory.rights??REMOVE)>=FILL ?
-                html`
-                    <span class="-icon" @${{click:explorer.synchronised(on_add_dir)}}>📁</span>
-                    <span class="-icon" @${{click:explorer.synchronised(on_add)}}>➕</span>
-                ` : null
-            }
-            
+            <span class="-icon" @${{click:explorer.synchronised(on_add_dir)}}>📁</span>
+            <span class="-icon" @${{click:explorer.synchronised(on_add)}}>➕</span>
         `)
         header.ondragover = e => e.preventDefault()
         header.ondrop = explorer.synchronised(on_drop)
