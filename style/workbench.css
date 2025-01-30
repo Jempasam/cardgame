@@ -47,6 +47,15 @@ html,body{
 }
 /* */
 
+/* STUB */
+.stub_pane{
+    background: var(--dark);
+    box-shadow: inset 0 0 3rem 2rem var(--shadow);
+    width: 100%;
+    height: 100%;
+}
+/* */
+
 /* CODEBLOCK */
 pre{
     padding: .5rem;

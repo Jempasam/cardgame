@@ -7,5 +7,6 @@ export const SWORD = new CardType("Sword", pictures.sword, ["a cool sword"], [ef
 export const BIG_SWORD = new CardType("Big Sword", pictures.sword, ["a cool big sword"], [effects.BIG_DAMAGE])
 
 export const HEAL_BLOOD = new CardType("Heal Blood", pictures.blood, ["heal a bit"], [effects.SMALL_HEAL])
+export const POTION = new CardType("Heal Potion", pictures.potion, ["heal a a lot"], [effects.MEDIUM_HEAL])
 
 export const BIG_DRAGON = new CardType("Big Dragon", pictures.dragon, ["a big dragon"], [effects.BIG_DAMAGE, effects.SMALL_HEAL])

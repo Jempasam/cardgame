@@ -3,28 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!--<link rel="stylesheet" href="style/editor.css">-->
-    <!--<script type="module" src="js/view/picture.js"></script>-->
+    <link rel="stylesheet" href="style/editor.css">
+    <script type="module" src="js/view/picture.js"></script>
     <title>Icon Dev Editor</title>
-    <style>
-        html{
-            background-color: #333333;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100%;
-        }
-    </style>
 </head>
 <body>
-    <script>
-        (async()=>{
-            const picture = await import("/js/editor/picture/picture_editor.js");
-            document.body.replaceChildren(new picture.PictureEditorElement())
-        })()
-    </script>
-
-    <!--<div class="horizontal">
+    <div class="horizontal">
         <div class="vertical menu _hidden" id="explaination">
             <div class="_hide_button">O</div>
             <h3>Auto Rendering 2d editor</h3>
@@ -50,7 +34,7 @@
             <canvas id=renderer class=display width="300" height="300"></canvas>
             <canvas id=editor_renderer class=display width="300" height="300"></canvas>
         </div>
-        <div class="vertical menu" id="editor">
+        <div class="vertical menu _thin" id="editor">
             <div class="_hide_button">X</div>
             <h3>Editor</h3>
             <div id="color_display" class="color_display">A</div>
@@ -63,29 +47,38 @@
             <h3>Rendering Mod</h3>
             <select id="rendering_mode"></select>
             <h3>Colors</h3>
+
             <span title="Main color, skin, fur, etc...">?</span>
-            <input type="color" id="colors0" value="#000000">
-            <input type="range" id="alpha0" title="Alpha" min="0" max="100">
-            <input type="range" id="light0" title="Light Emission" min="0" max="100">
-            <input type="range" id="reflection0" title="Reflectionness" min="0" max="100">
+            <div class="material_inputs">
+                <input type="color" id="colors0" value="#000000">
+                <label>Alpha</label><input type="range" id="alpha0" title="Alpha" min="0" max="100"/>
+                <label>Light</label><input type="range" id="light0" title="Light Emission" min="0" max="100"/>
+                <label>Reflection</label><input type="range" id="reflection0" title="Reflectionness" min="0" max="100"/>
+            </div>
 
             <span title="Secondary color, eye white, teeths, ...">?</span>
-            <input type="color" id="colors1" value="#000000">
-            <input type="range" id="alpha1" title="Alpha" min="0" max="100">
-            <input type="range" id="light1" title="Light Emission" min="0" max="100">
-            <input type="range" id="reflection1" title="Reflectionness" min="0" max="100">
+            <div class="material_inputs">
+                <input type="color" id="colors1" value="#000000">
+                <label>Alpha</label><input type="range" id="alpha1" title="Alpha" min="0" max="100"/>
+                <label>Light</label><input type="range" id="light1" title="Light Emission" min="0" max="100"/>
+                <label>Reflection</label><input type="range" id="reflection1" title="Reflectionness" min="0" max="100"/>
+            </div>
 
             <span title="Tertiary color, pupil color, ...">?</span>
-            <input type="color" id="colors2" value="#000000">
-            <input type="range" id="alpha2" title="Alpha" min="0" max="100">
-            <input type="range" id="light2" title="Light Emission" min="0" max="100">
-            <input type="range" id="reflection2" min="0" max="100">
+            <div class="material_inputs">
+                <input type="color" id="colors2" value="#000000">
+                <label>Alpha</label><input type="range" id="alpha2" title="Alpha" min="0" max="100"/>
+                <label>Light</label><input type="range" id="light2" title="Light Emission" min="0" max="100"/>
+                <label>Reflection</label><input type="range" id="reflection2" title="Reflectionness" min="0" max="100"/>
+            </div>
 
             <span title="Quaternary color, tongue, hairs, ...">?</span>
-            <input type="color" id="colors3" value="#000000">
-            <input type="range" id="alpha3" title="Alpha" min="0" max="100">
-            <input type="range" id="light3" title="Light Emission" min="0" max="100">
-            <input type="range" id="reflection3" title="Reflectionness" min="0" max="100">
+            <div class="material_inputs">
+                <input type="color" id="colors3" value="#000000">
+                <label>Alpha</label><input type="range" id="alpha3" title="Alpha" min="0" max="100"/>
+                <label>Light</label><input type="range" id="light3" title="Light Emission" min="0" max="100"/>
+                <label>Reflection</label><input type="range" id="reflection3" title="Reflectionness" min="0" max="100"/>
+            </div>
         </div>
         <div class="vertical menu">
             <div class="_hide_button">X</div>
@@ -117,6 +110,6 @@
             <input type="number" id="width" value="16" min="4" autocomplete="off">
             <input type="number" id="height" value="16" min="4" autocomplete="off">
         </div>
-    </div>-->
+    </div>
 </body>
 </html>

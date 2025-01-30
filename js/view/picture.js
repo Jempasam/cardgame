@@ -11,7 +11,7 @@ const color_display = document.querySelector("#color_display");
 
 let picture = new Picture()
 
-import rendering_modes from "./picture/rendering_modes.js";
+import rendering_modes from "../editor/picture/rendering_modes.js";
 let rendering_mode = rendering_modes.shaded
 let current_effect = it=>it
 let brush = ["color", 0];
@@ -132,7 +132,7 @@ get("#rendering_mode").append(html`
 get("#rendering_mode").firstElementChild.click()
 
 // Effects
-import effects from "./picture/effects.js";
+import effects from "../editor/picture/effects.js";
 import { chest } from "../yugioh/pictures.js";
 get("#effects").append(html`
   ${function*(){
@@ -239,7 +239,7 @@ for(let i=0; i<4; i++){
 
 // Examples
 const example_select = get("#examples")
-const example_json = await fetch(import.meta.resolve("./picture/shapes.json")).then(it=>it.json())
+const example_json = await fetch(import.meta.resolve("./shapes.json")).then(it=>it.json())
 for(const [name, data] of Object.entries(example_json)){
     const selection = html.a`<option value=${name}>${name}</option>`
     selection.onclick=()=>{

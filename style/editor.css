@@ -1,4 +1,4 @@
-html,body{
+html,body,:host{
     margin: 0;
     padding: 0;
 
@@ -24,6 +24,10 @@ body{
     padding: 1rem;
     border-radius: 1rem;
     border: 1px solid var(--alt);
+
+    &._thin{
+        width: 8rem;
+    }
 
     &._hidden{
         width: .5rem;
@@ -85,6 +89,7 @@ body{
         rgba(255, 255, 255, 0.1) 50%,
         transparent 50%
     );
+    background-color: gray;
     background-size: 5rem 5rem;
     border: 1px solid var(--alt);
 }
@@ -154,6 +159,24 @@ input[type=range]{
         position: absolute;
         left: 0;
         top: 32.5%;
+    }
+}
+.material_inputs{
+    display: flex;
+    flex-direction: column;
+    width: 10rem;
+    >label{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        width: 10rem;
+    }
+    >input[type=range]{
+        width: 6rem;
+        height: .8rem;
+    }
+    >input[type=color]{
+        align-self: center;
     }
 }
 /* */

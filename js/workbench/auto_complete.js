@@ -1,17 +1,16 @@
-import { Blockly, getBlocksInToolbox } from "./blockly.mjs"
+import { Blockly, getBlocksInToolbox } from "./utils/blockly.mjs"
 
 /**
  * 
- * @param {import("./blockly.mjs").WorkspaceSvg} workspace
- * @param {string} id
- * @param {(block: import("./blockly.mjs").Block)=>boolean} searched_filter
- * @param {(block: import("./blockly.mjs").Block)=>boolean} target_filter
- * @param {(block: import("./blockly.mjs").Block)=>string[]|null} searched_checks
- * @param {(block: import("./blockly.mjs").Block)=>string[]|null} target_checks
+ * @param {(block: import("./utils/blockly.mjs").Block)=>boolean} searched_filter
+ * @param {(block: import("./utils/blockly.mjs").Block)=>boolean} target_filter
+ * @param {(block: import("./utils/blockly.mjs").Block)=>string[]|null} searched_checks
+ * @param {(block: import("./utils/blockly.mjs").Block)=>string[]|null} target_checks
+ * @returns {import("./addon.js").BlocklyAddon['category_callbacks'][0]}
  */
-export function registerAutoComplete(workspace, id, target_filter, searched_filter, target_checks, searched_checks){
+export function autoCompleteCallback(target_filter, searched_filter, target_checks, searched_checks){
     let rec=0
-    workspace.registerToolboxCategoryCallback(id,(workspace)=>{
+    return (workspace)=>{
         rec++
         if(rec>1)return
 
@@ -70,45 +69,33 @@ export function registerAutoComplete(workspace, id, target_filter, searched_filt
 
         rec=0
         return definition
-    })
+    }
 }
 
-/**
- * 
- * @param {import("./blockly.mjs").WorkspaceSvg} workspace 
- */
-export function registerAllAutoComplete(workspace){
-    registerAutoComplete(workspace, "OUTPUT_COMPLETE",
-        (block)=>block.outputConnection!=null,
-        (block)=>block.inputList.length>0,
-        (block)=>block.outputConnection?.getCheck(),
-        (block)=>{
-            const checks = block.inputList.filter(it=>it.connection!=null).map(it=>it.connection.getCheck()).filter(it=>it!=null)
-            return checks.flatMap(it=>it)
-        }
-    )
-
-    registerAutoComplete(workspace, "GETTER_COMPLETE",
-        (block)=>block.outputConnection!=null,
-        (block)=>block.inputList.length>0 && block.outputConnection!=null,
-        (block)=>block.outputConnection?.getCheck(),
-        (block)=>{
-            const checks = block.inputList.filter(it=>it.connection!=null).map(it=>it.connection.getCheck()).filter(it=>it!=null)
-            return checks.flatMap(it=>it)
-        }
-    )
-
-    registerAutoComplete(workspace, "PARAMETER_COMPLETE",
-        (block)=>block.inputList.length>0,
-        (block)=>block.outputConnection!=null,
-        (block)=>{
-            const checks = block.inputList
-                .filter(it=>it.connection!=null && it.connection.isConnected)
-                .map(it=>it.connection.getCheck())
-            if(checks.some(it=>it==null))return null
-            else return checks.flatMap(it=>it)
-        },
-        (block)=>block.outputConnection?.getCheck(),
-
-    )
+/** @type {import("./addon.js").BlocklyAddon} */ 
+export default {
+    category_callbacks:{
+        "GETTER_COMPLETE": autoCompleteCallback(
+            (block)=>block.outputConnection!=null,
+            (block)=>block.inputList.length>0,
+            (block)=>block.outputConnection?.getCheck(),
+            (block)=>{
+                const checks = block.inputList.filter(it=>it.connection!=null).map(it=>it.connection.getCheck()).filter(it=>it!=null)
+                return checks.flatMap(it=>it)
+            }
+        ),
+        "INPUT_COMPLETE": autoCompleteCallback(
+            (block)=>block.inputList.length>0,
+            (block)=>block.outputConnection!=null,
+            (block)=>{
+                const checks = block.inputList
+                    .filter(it=>it.connection!=null && (!it.connection.isConnected() || it.connection.targetBlock().isShadow()))
+                    .map(it=>it.connection.getCheck())
+                if(checks.some(it=>it==null))return null
+                else return checks.flatMap(it=>it)
+            },
+            (block)=>block.outputConnection?.getCheck(),
+    
+        )
+    }
 }

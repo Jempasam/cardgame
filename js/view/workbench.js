@@ -1,33 +1,36 @@
-import { Blockly, Javascript } from "../workbench/blockly.mjs"
 import { FileExplorer, FILL, NOTHING } from "../editor/file_explorer.js"
-import globalWorkbench, { registrerGlobalCategories } from "../workbench/global.js"
+import editor_views from "../editor/views/editor_views.js"
+import { EditorView, EditorViewContext } from "../editor/views/EditorView.js"
 
 const root = document.getElementById("root")
 const workbench = new FileExplorer()
 const output = document.getElementById("output")
-const directory = workbench.RootDirectory({
+const file_system = workbench.RootDirectory({
     type: "root",
     name: "Workbench",
     rights: NOTHING,
     files:[
         {
-            type: "📄script",
-            name: "Scripts",
+            name: "Jauges",
+            type: "🌡️jauges",
+            metadata: {type:"JaugeType"},
             color: "red",
             rights: FILL,
             files:[
                 {
-                    type: "📄script",
-                    name: "index.js",
-                    content: "console.log('hello world')"},
+                    type: "🌡️jauges",
+                    name: "Vies",
+                    content: null
+                },
                 {
-                    type: "📄script",
-                    name: "main.js",
-                    content: "console.log('hello world')"},
+                    type: "🌡️jauges",
+                    name: "Mana",
+                    content: null
+                },
                 {
-                    type: "📄script",
-                    name: "app.js",
-                    content: "console.log('hello world')"
+                    type: "🌡️jauges",
+                    name: "Maladie",
+                    content: null
                 }
             ]
         },
@@ -40,11 +43,11 @@ const directory = workbench.RootDirectory({
                 {
                     type: "🖼️picture",
                     name: "background.jpg",
-                    content: "data:image/jpeg;base64,..."},
+                    content: {}},
                 {
                     type: "🖼️picture",
                     name: "logo.png",
-                    content: "data:image/png;base64,..."
+                    content: {}
                 }
             ]
         },
@@ -57,11 +60,11 @@ const directory = workbench.RootDirectory({
                 {
                     type: "🥪food",
                     name: "Hot Dog",
-                    content: "data:image/jpeg;base64,..."},
+                    content: {}},
                 {
                     type: "🥪food",
                     name: "Sandwich",
-                    content: "data:image/png;base64,..."
+                    content: {}
                 }
             ]
         },
@@ -74,15 +77,15 @@ const directory = workbench.RootDirectory({
                 {
                     type: "🌟effects",
                     name: "Zombified",
-                    content: "data:application/json;base64,..."},
+                    content: {}},
                 {
                     type: "🌟effects",
                     name: "Vampire",
-                    content: "data:application/json;base64,..."},
+                    content: {}},
                 {
                     type: "🌟effects",
                     name: "Werewolf",
-                    content: "data:application/json;base64,..."
+                    content: {}
                 }
             ]
         },
@@ -95,59 +98,84 @@ const directory = workbench.RootDirectory({
                 {
                     type: "🌡️jauges",
                     name: "Vie",
-                    content: "data:application/json;base64,..."},
+                    content: {}},
                 {
                     type: "🌡️jauges",
                     name: "Faim",
-                    content: "data:application/json;base64,..."},
+                    content: {}},
                 {
                     type: "🌡️jauges",
                     name: "Mana",
-                    content: "data:application/json;base64,..."},
+                    content: {}},
                 {
                     type: "🌡️jauges",
                     name: "Or",
-                    content: "data:application/json;base64,..."},
+                    content: {}},
                 {
                     type: "🌡️jauges",
                     name: "Maladie",
-                    content: "data:application/json;base64,..."
+                    content: {}
                 }
             ]
         }
     ]
 })
-directory.item.on_remove = (path, item) => {
+file_system.item.on_remove = (path, item) => {
     return path.length > 1
 }
-directory.item.on_add = (path, item) => {
-    console.log(path, item)
-    item.name = "Salade"
-    return path[0]==0
+file_system.item.on_add = (path, item) => {
+    const directory = /** @type {import("../editor/file_explorer.js").Directory} */ (file_system.get(path.slice(0,-1)))
+    console.log(directory)
+    // No Double Name
+    let name = /** @type {string} */ (item.name)
+    while(directory.files.find(it=>it.name==name)!=null){
+        let number = 1
+        let keeped_size = name.length
+        let match = name.match(/\d+$/)
+        if(match!=null){
+            number = parseInt(match[0])
+            keeped_size = match.index
+        }
+        name = name.slice(0,keeped_size) + (number+1)
+    }
+    item.name = name
+    console.log(item.name)
+
+    return true
 }
-root.replaceWith(directory.element)
+file_system.item.on_rename = /** @type {function(string,string,number[])} */ (before,after,path) => {
+    const directory = /** @type {import("../editor/file_explorer.js").Directory} */ (file_system.get(path.slice(0,-1)))
+    return after.indexOf("/")==-1 && directory.files.find(it=>it.name==after)==null
+}
+root.replaceWith(file_system.element)
 
-/** @type {import("../../node_modules/blockly/core/utils/toolbox.js").ToolboxInfo} */ 
-Blockly.ContextMenuItems.registerCommentOptions();
-const toolbox = {
-    kind: 'categoryToolbox',
-    contents: [...globalWorkbench],
-};
+/** FILE SELECTION */
+const editorView = /** @type {HTMLElement} */ (document.querySelector("#editorView"))
+let currentSelection = /** @type {import("../editor/file_explorer.js").File|import("../editor/file_explorer.js").Directory|null} */ (null)
+let currentEditor = /** @type {EditorView|null} */ (null)
+file_system.item.on_select = (path)=>{
+    const old = currentSelection
+    currentSelection = file_system.get(path)
 
-const workspace=Blockly.inject('blocklyDiv', {
-    toolbox: toolbox,
-    media: '/media/',
-    scrollbars: true,
-    horizontalLayout:false,
-    toolboxPosition: "end",
-});
-registrerGlobalCategories(workspace)
+    const type = "content" in currentSelection ? currentSelection.type : "else"
+    const editor = editor_views[type] ?? editor_views.else
 
-window.addEventListener("keypress", e=>{
-    if(e.key=="s"){
-        output.innerText = JSON.stringify(Blockly.serialization.workspaces.save(workspace))
+    if(old!=null){
+        if("content" in old){
+            old.content = currentEditor.serialize()
+        }
+        currentEditor.close()
     }
-    if(e.key=="g"){
-        output.innerText = Javascript.javascriptGenerator.workspaceToCode(workspace)
+
+    currentEditor = editor
+    if(currentSelection!=null){
+        editor.open(new EditorViewContext(editorView, file_system.directory, path, output))
+        if("content" in currentSelection){
+            if(currentSelection.content==null) editor.initDefault()
+            else editor.deserialize(currentSelection.content)
+        }
     }
-})
+    return true
+}
+
+file_system.item.select()

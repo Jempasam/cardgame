@@ -7,14 +7,15 @@ export const FILL = 1
 export const MODIFY = 2
 export const REMOVE = 3
 /**
- * @typedef {{type?:string, color?:string, name:string, rights?:number, content:any}} File
- * @typedef {{type?:string, color?:string, name:string, rights?:number, files:(File|Directory)[]}} Directory
+ * @typedef {{type?:string, color?:string, name:string, rights?:number, metadata?:{[id:string]:string}}} Node
+ * @typedef {Node&{content:any}} File
+ * @typedef {Node&{files:(File|Directory)[]}} Directory
  * 
  */
 export class FileExplorer{
 
     constructor(){
-        this.selected = null
+        this.selected = /** @type {HTMLElement|null} */ (null)
         this.dragged = /** @type {{uuid:String,file:File|Directory,item:FileExplorer.Item}} */ (null)
     }
 
@@ -120,6 +121,19 @@ FileExplorer.Item = class{
     }
 
     /**
+     * Select the item
+     */
+    select(){
+        if(!this.header.parentElement)return
+        this.on_select([])
+        if(this.explorer.selected!=null){
+            this.explorer.selected.classList.remove("_selected")
+        }
+        this.explorer.selected=this.header
+        this.explorer.selected.classList.add("_selected")
+    }
+
+    /**
      * Create an item header
      * @returns 
      */
@@ -160,12 +174,7 @@ FileExplorer.Item = class{
         async function on_rename_or_select(e){
             e.stopPropagation()
             if(!header.parentElement)return
-            that.on_select([])
-            if(explorer.selected!=null){
-                explorer.selected.classList.remove("_selected")
-            }
-            explorer.selected=header
-            explorer.selected.classList.add("_selected")
+            that.select()
             if(the_select==null) the_select = setTimeout( () => { the_select = null }, 300 )
             else{
                 clearTimeout(the_select)
@@ -266,15 +275,15 @@ FileExplorer.Directory = class{
     get(path){
         /** @type {File|Directory} */ 
         let target = this.directory
+        let remaining = path
         while(true){
-            let current = path[0]
-            let remaining = path.slice(1)
- 
             if(remaining.length<=0)break
             if(!("files" in target))return undefined
-            if(current>=target.files.length)return undefined
 
-            target = this.directory.files[current]
+            let current = remaining[0]
+            remaining = remaining.slice(1)
+            if(current>=target.files.length)return undefined
+            target = target.files[current]
         }
         return target
     }

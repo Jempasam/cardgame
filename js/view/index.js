@@ -13,7 +13,7 @@ import { html } from "../utils/doc.js"
 import { PromiseChain, until } from "../utils/promises.js"
 import { get } from "../utils/query.js"
 
-let pictures = await fetch(import.meta.resolve("./picture/shapes.json"))
+let pictures = await fetch(import.meta.resolve("../editor/picture/shapes.json"))
     .then(it=>it.json())
     .then(it=>Object.fromEntries(Object.entries(it).map(([key, value]) => [key, new Picture(...value)])))
 
@@ -24,7 +24,7 @@ let goblin_type = new CardType( "Goblin", pictures.goblin, ["a mischievelous gob
 let poison_type = new StatusType("Poison", pictures.poison)
 let bleed_type = new StatusType("Bleeding", pictures.blood)
 
-let life_type = new JaugeType(0, 100, 50, [1,0,0], "Life")
+let life_type = new JaugeType("Life", [1,0,0],0, 100, 50,)
 
 const card_types = Object.values(await import("../yugioh/cards.js"))
 
